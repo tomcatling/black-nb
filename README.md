@@ -24,6 +24,6 @@ nb-filter-cells -i notebook.ipynb -o notebook-solutions.ipynb -t exercise
 
 Copyright © 2019 Liam Coatman.
 
-`nb-clean` is distributed under the terms of the [ISC licence].
+`nb-filter-cells` is distributed under the terms of the [ISC licence].
 
 [isc licence]: https://opensource.org/licenses/ISC
