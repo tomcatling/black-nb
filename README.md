@@ -4,10 +4,8 @@
  
 ## Installation
 
-Clone this repository, then run: 
-
 ```bash
-pip install .
+pip install git+git://github.com/liamcoatman/nb-filter-cells.git#egg=nb-filter-cells
 ```
 
 `nb-filter-cells` requires Python 3.6 or later.
