@@ -1,6 +1,6 @@
 # nb-black
 
-`nb-black` filters applied black to the code cells of a Jupyter notebook. 
+`nb-black` applies black to the code cells of a Jupyter notebook. 
  
 ## Installation
 
