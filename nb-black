@@ -58,7 +58,7 @@ from typing import (
     default=[],
     help="Path patterns to exclude alongside '.ipynb_checkpoints'",
     show_default=True,
-    multiple=True
+    multiple=True,
 )
 def main(src: Tuple[str], line_length: int, exclude: Iterable[str]) -> None:
     """Apply black to code cells in jupyter notebooks
@@ -69,7 +69,7 @@ def main(src: Tuple[str], line_length: int, exclude: Iterable[str]) -> None:
         exit(0)
 
     exclude = list(exclude)
-    exclude.append('.ipynb_checkpoints')
+    exclude.append(".ipynb_checkpoints")
 
     notebook_paths = find_notebooks(src, exclude)
 
