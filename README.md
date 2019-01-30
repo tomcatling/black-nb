@@ -1,6 +1,6 @@
 # nb-black
 
-`nb-black` applies black to the code cells of Jupyter notebooks. It can be called with a list of files or directories and will search for all files ending with '.ipynb', excluding paths containing '.ipynb_checkpoints'. Additional exclusions can be added using one or 
+`nb-black` applies [black](https://github.com/ambv/black) to the code cells of Jupyter notebooks. It can be called with a list of files or directories and will search for all files ending with '.ipynb', excluding paths containing '.ipynb_checkpoints'. Additional exclusions can be added using one or 
 more `-x` options (wildcards not supported), line length can be configured with `-l`.
 
 Non-code cells and cells with cell magic (anything starting with '%%') will be excluded. Line magic ('%') will be treated as a comment
