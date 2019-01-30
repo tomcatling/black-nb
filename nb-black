@@ -52,20 +52,24 @@ from typing import (
     show_default=True,
 )
 @click.option(
-    "-ex",
+    "-x",
     "--exclude",
     type=str,
-    default='.ipynb_checkpoints',
-    help="Path patterns to exclude",
+    default=[],
+    help="Path patterns to exclude alongside '.ipynb_checkpoints'",
     show_default=True,
+    multiple=True
 )
-def main(src: Tuple[str], line_length: int, exclude: str) -> None:
+def main(src: Tuple[str], line_length: int, exclude: Iterable[str]) -> None:
     """Apply black to code cells in jupyter notebooks
     underneath the src path."""
 
     if not src:
         click.secho("No path given. Nothing to do 😴")
         exit(0)
+
+    exclude = list(exclude)
+    exclude.append('.ipynb_checkpoints')
 
     notebook_paths = find_notebooks(src, exclude)
 
@@ -155,7 +159,7 @@ def find_notebooks(srcs: Iterable[str], exclude: str) -> Iterable[str]:
                 for name in files:
                     if name[-6:].lower() == ".ipynb":
                         filepath = os.path.join(root, name)
-                        if exclude not in filepath:
+                        if not any([ex in filepath for ex in exclude]):
                             notebook_paths.append(filepath)
         elif src[-6:].lower() == ".ipynb":
             notebook_paths.append(src)

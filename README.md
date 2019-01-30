@@ -1,6 +1,8 @@
 # nb-black
 
-`nb-black` applies black to the code cells of a Jupyter notebook. 
+`nb-black` applies black to the code cells of Jupyter notebooks. It can be called with a list of files or directories and will search for all files ending with '.ipynb', excluding paths containing '.ipynb_checkpoints'. Additional exclusions can be added using one or 
+more `-x` options, line length can be configured with `-l`.
+
  
 ## Installation
 
@@ -12,10 +14,10 @@ pip install git+git://github.com/tomcatling/nb-black.git#egg=nb-black
 
 ## Usage
 
-To remove all cells with 'exercise' tag:
+To apply black with a line length of 88 to all notebooks under the current directory, excluding anything with 'example' in its path and 'messy.ipynb' in the current directory:
 
 ```bash
-nb-black -i notebook.ipynb -o notebook-blacked.ipynb -l 79
+nb-black . -l 88 -x example -x ./messy.ipynb
 ```
 
 ## Copyright
