@@ -6,7 +6,7 @@ import argparse
 import sys
 
 import nbformat
-
+import black
 
 def main() -> None:
     """Filter Jupyter notebook cells by tag."""
@@ -28,21 +28,26 @@ def main() -> None:
         help="output file",
     )
     parser.add_argument(
-        "-t",
-        "--tag",
+        "-l",
+        "--length",
         nargs="?",
-        type=str,
-        default="exercise",
-        help="tag to filter out",
+        type=int,
+        default=79,
+        help="black line length",
     )
     args = parser.parse_args()
     notebook = nbformat.read(args.input, as_version=nbformat.NO_CONVERT)
-    filtered_cells = []
+    formatted_cells = []
     for cell in notebook["cells"]:
-        if "tags" in cell["metadata"] and args.tag in cell["metadata"]["tags"]:
-            continue
-        filtered_cells.append(cell)
-    notebook["cells"] = filtered_cells
+
+        if cell["cell_type"] == "code":
+            source = ''.join(cell["source"])
+            formatted_source = black.format_str(source, args.length)
+            cell["source"] = formatted_source.splitlines()
+        
+        formatted_cells.append(cell)
+
+    notebook["cells"] = formatted_cells
     nbformat.write(notebook, args.output)
 
 

@@ -1,27 +1,27 @@
-# nb-filter-cells
+# nb-black
 
-`nb-filter-cells` filters Jupyter notebooks cells by tag. 
+`nb-black` filters applied black to the code cells of a Jupyter notebook. 
  
 ## Installation
 
 ```bash
-pip install git+git://github.com/liamcoatman/nb-filter-cells.git#egg=nb-filter-cells
+pip install git+git://github.com/tomcatling/nb-black.git#egg=nb-black
 ```
 
-`nb-filter-cells` requires Python 3.6 or later.
+`nb-black` requires Python 3.6 or later.
 
 ## Usage
 
 To remove all cells with 'exercise' tag:
 
 ```bash
-nb-filter-cells -i notebook.ipynb -o notebook-solutions.ipynb -t exercise
+nb-black -i notebook.ipynb -o notebook-blacked.ipynb -l 79
 ```
 
 ## Copyright
 
-Copyright © 2019 Liam Coatman.
+Copyright © 2019 Tom Catling.
 
-`nb-filter-cells` is distributed under the terms of the [ISC licence].
+`nb-black` is distributed under the terms of the [ISC licence].
 
 [isc licence]: https://opensource.org/licenses/ISC

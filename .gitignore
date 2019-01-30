@@ -1,5 +1,5 @@
 /.mypy_cache/
 /build/
 /dist/
-/filter_cells.egg-info/
+/nb-black.egg-info/
 __pycache__/

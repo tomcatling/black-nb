@@ -14,15 +14,15 @@ def read_long_description() -> str:
 
 
 setup(
-    name="nb-filter-cells",
+    name="nb-black",
     version="0.0.1",
-    description="Filter Jupyter notebook cells by tag",
+    description="Apply black to all code cells in a jupyter notebook.",
     long_description=read_long_description(),
     long_description_content_type="text/markdown",
-    url="https://github.com/liamcoatman/nb-filter-cells",
-    author="Liam Coatman",
-    author_email="liam.coatman@gmail.com",
+    url="https://github.com/tomcatling/nb-black",
+    author="Tom Catling",
+    author_email="tomcatling@gmail.com",
     license="ISC",
-    scripts=["nb-filter-cells"],
-    install_requires=["nbformat"],
+    scripts=["nb-black"],
+    install_requires=["nbformat", "black"],
 )
