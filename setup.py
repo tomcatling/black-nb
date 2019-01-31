@@ -1,5 +1,5 @@
 
-"""Setup module for nb-filter-cells."""
+"""Setup module for black-nb."""
 
 from pathlib import Path
 
@@ -19,10 +19,10 @@ setup(
     description="Apply black to all code cells in a jupyter notebook.",
     long_description=read_long_description(),
     long_description_content_type="text/markdown",
-    url="https://github.com/tomcatling/nb-black",
+    url="https://github.com/tomcatling/black-nb",
     author="Tom Catling",
     author_email="tomcatling@gmail.com",
     license="ISC",
-    scripts=["nb-black"],
+    scripts=["black-nb"],
     install_requires=["nbformat", "black"],
 )
