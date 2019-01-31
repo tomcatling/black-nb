@@ -34,10 +34,7 @@ from functools import partial
 from pathlib import Path
 
 
-
-DEFAULT_EXCLUDES = (
-    r"/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist)/"
-)
+DEFAULT_EXCLUDES = r"/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist)/"
 DEFAULT_INCLUDES = r"\.ipynb$"
 
 
@@ -109,7 +106,9 @@ def re_compile_maybe_verbose(regex: str) -> Pattern[str]:
         "reformatted.  Return code 123 means there was an internal error."
     ),
 )
-def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: bool) -> None:
+def main(
+    src: Tuple[str], line_length: int, include: str, exclude: str, check: bool
+) -> None:
     """Apply black to code cells in jupyter notebooks
     underneath the src path."""
 
@@ -128,14 +127,15 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
         err(f"Invalid regular expression for exclude given: {exclude!r}")
         exit(1)
 
-
     root = find_project_root(src)
     sources: Set[Path] = set()
     for s in src:
         p = Path(s)
         if p.is_dir():
             sources.update(
-                gen_notebook_files_in_dir(p, root, include_regex, exclude_regex)
+                gen_notebook_files_in_dir(
+                    p, root, include_regex, exclude_regex
+                )
             )
         elif p.is_file() or s == "-":
             # if a file was explicitly given, we don't care about its extension
@@ -149,11 +149,13 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
 
     changes = False
     for notebook_path in sources:
-        
+
         click.secho(f"{notebook_path.resolve()} >", nl=False)
 
-        notebook = nbformat.read(open(notebook_path.resolve(),'r'), as_version=nbformat.NO_CONVERT)
-        
+        notebook = nbformat.read(
+            open(notebook_path.resolve(), "r"), as_version=nbformat.NO_CONVERT
+        )
+
         formatted_cells = []
         for cell in notebook["cells"]:
 
@@ -161,30 +163,30 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
                 try:
                     formatted_source = format_cell(cell["source"], line_length)
                 except black.InvalidInput:
-                    click.secho('*', nl=False)
+                    click.secho("*", nl=False)
                 else:
-                    click.secho('-', nl=False)
-                    
-                    if check :
+                    click.secho("-", nl=False)
+
+                    if check:
                         changes |= formatted_source != cell["source"]
                     else:
                         cell["source"] = formatted_source
-                        
 
             formatted_cells.append(cell)
 
         notebook["cells"] = formatted_cells
-        nbformat.write(notebook, open(notebook_path.resolve(),'w'))
+        nbformat.write(notebook, open(notebook_path.resolve(), "w"))
         click.secho("\n", nl=False)
-    
+
     if check:
         if changes:
-            err('Does not pass.')
+            err("Does not pass.")
             exit(1)
         else:
-            out('OK')
+            out("OK")
             exit(0)
     exit(0)
+
 
 def format_cell(source: str, line_length: int) -> str:
 
@@ -202,8 +204,9 @@ def format_cell(source: str, line_length: int) -> str:
 
     return reveal_magic(formatted_source)
 
+
 def contains_magic(line: str) -> bool:
-    return line[0] == '%' or line[0] == '!'
+    return line[0] == "%" or line[0] == "!"
 
 
 def hide_magic(line: str) -> str:
@@ -226,19 +229,20 @@ def reveal_magic(source: str) -> str:
 
 
 def gen_notebook_files_in_dir(
-    path: Path,
-    root: Path,
-    include: Pattern[str],
-    exclude: Pattern[str],
+    path: Path, root: Path, include: Pattern[str], exclude: Pattern[str]
 ) -> Iterator[Path]:
     """Generate all files under `path` whose paths are not excluded by the
     `exclude` regex, but are included by the `include` regex.
     Symbolic links pointing outside of the `root` directory are ignored.
     """
-    assert root.is_absolute(), f"INTERNAL ERROR: `root` must be absolute but is {root}"
+    assert (
+        root.is_absolute()
+    ), f"INTERNAL ERROR: `root` must be absolute but is {root}"
     for child in path.iterdir():
         try:
-            normalized_path = "/" + child.resolve().relative_to(root).as_posix()
+            normalized_path = (
+                "/" + child.resolve().relative_to(root).as_posix()
+            )
         except ValueError:
             if child.is_symlink():
                 continue
@@ -258,6 +262,7 @@ def gen_notebook_files_in_dir(
             include_match = include.search(normalized_path)
             if include_match:
                 yield child
+
 
 def find_project_root(srcs: Iterable[str]) -> Path:
     """Return a directory containing .git, .hg, or pyproject.toml.
