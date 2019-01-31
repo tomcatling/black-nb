@@ -52,18 +52,6 @@ def re_compile_maybe_verbose(regex: str) -> Pattern[str]:
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
-@click.argument(
-    "src",
-    nargs=-1,
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        readable=True,
-        allow_dash=True,
-    ),
-    is_eager=True,
-)
 @click.option(
     "-l",
     "--line-length",
@@ -110,6 +98,18 @@ def re_compile_maybe_verbose(regex: str) -> Pattern[str]:
     "--clear-output",
     is_flag=True,
     help=("Clean cell output as part of formatting."),
+)
+@click.argument(
+    "src",
+    nargs=-1,
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=True,
+        readable=True,
+        allow_dash=True,
+    ),
+    is_eager=True,
 )
 def main(
     src: Tuple[str],
@@ -171,11 +171,11 @@ def main(
         click.secho(f"{notebook_path.resolve()} >", nl=False)
 
         formatted_cells = []
-        changes = False
         for cell in notebook["cells"]:
-            cell, changes = handle_cell(
-                cell, changes, check, clear_output, line_length
+            cell, diff = handle_cell(
+                cell, check, clear_output, line_length
             )
+            changes |= diff
             formatted_cells.append(cell)
 
         notebook["cells"] = formatted_cells
@@ -194,12 +194,12 @@ def main(
 
 def handle_cell(
     cell: dict,
-    changes: bool,
     check: bool,
     clear_output: bool,
     line_length: int,
-) -> dict:
+) -> Tuple[Dict,bool]:
 
+    changes = False
     if cell["cell_type"] == "code":
         try:
             formatted_source = format_cell(cell["source"], line_length)
@@ -207,11 +207,6 @@ def handle_cell(
             click.secho("*", nl=False, fg="red")
         else:
             changes |= formatted_source != cell["source"]
-
-            if changes:
-                click.secho("-", nl=False)
-            else:
-                click.secho("-", nl=False, fg="green")
 
             if not check:
                 cell["source"] = formatted_source
@@ -223,6 +218,11 @@ def handle_cell(
             if not check:
                 cell["execution_count"] = None
                 cell["outputs"] = 0
+
+        if changes:
+            click.secho("-", nl=False)
+        else:
+            click.secho("-", nl=False, fg="green")
 
     return cell, changes
 

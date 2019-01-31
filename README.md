@@ -32,10 +32,10 @@ black-nb . -l 120 --exclude outputs
 ## Command Line Options
 
 *black-nb* doesn't provide many options.  You can list them by running
-`black --help`:
+`black-nb --help`:
 
 ```text
-black [OPTIONS] [SRC]...
+black-nb [OPTIONS] [SRC]...
 
 Options:
   -l, --line-length INTEGER   Where to wrap around.  [default: 88]
