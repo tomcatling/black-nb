@@ -113,6 +113,10 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
     """Apply black to code cells in jupyter notebooks
     underneath the src path."""
 
+    if not src:
+        out("No path given.")
+        exit(0)
+
     try:
         include_regex = re_compile_maybe_verbose(DEFAULT_INCLUDES)
     except re.error:
@@ -131,7 +135,7 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
         p = Path(s)
         if p.is_dir():
             sources.update(
-                gen_python_files_in_dir(p, root, include_regex, exclude_regex)
+                gen_notebook_files_in_dir(p, root, include_regex, exclude_regex)
             )
         elif p.is_file() or s == "-":
             # if a file was explicitly given, we don't care about its extension
@@ -146,7 +150,7 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
     changes = False
     for notebook_path in sources:
         
-        click.secho(f"{notebook_path.resolve()} >", nl=False, bold=True)
+        click.secho(f"{notebook_path.resolve()} >", nl=False)
 
         notebook = nbformat.read(open(notebook_path.resolve(),'r'), as_version=nbformat.NO_CONVERT)
         
@@ -162,7 +166,7 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
                     click.secho('-', nl=False)
                     
                     if check :
-                        changes = formatted_source != cell["source"]
+                        changes |= formatted_source != cell["source"]
                     else:
                         cell["source"] = formatted_source
                         
@@ -171,10 +175,11 @@ def main(src: Tuple[str], line_length: int, include: str, exclude: str, check: b
 
         notebook["cells"] = formatted_cells
         nbformat.write(notebook, open(notebook_path.resolve(),'w'))
-    click.secho("\n", nl=False)
+        click.secho("\n", nl=False)
     
     if check:
         if changes:
+            err('Does not pass.')
             exit(1)
         else:
             out('OK')
@@ -247,7 +252,7 @@ def gen_notebook_files_in_dir(
             continue
 
         if child.is_dir():
-            yield from gen_python_files_in_dir(child, root, include, exclude)
+            yield from gen_notebook_files_in_dir(child, root, include, exclude)
 
         elif child.is_file():
             include_match = include.search(normalized_path)
