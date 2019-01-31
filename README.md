@@ -14,7 +14,7 @@ Notebooks are modified inplace.
 pip install git+git://github.com/tomcatling/black-nb.git#egg=black-nb
 ```
 
-`nb-black` requires Python 3.6 or later.
+`black-nb` requires Python 3.6 or later.
 
 ## Usage
 
