@@ -117,12 +117,12 @@ def main(
         exit(0)
 
     try:
-        include_regex = re_compile_maybe_verbose(DEFAULT_INCLUDES)
+        include_regex = re_compile_maybe_verbose(include)
     except re.error:
         err(f"Invalid regular expression for include given: {include!r}")
         exit(1)
     try:
-        exclude_regex = re_compile_maybe_verbose(DEFAULT_EXCLUDES)
+        exclude_regex = re_compile_maybe_verbose(exclude)
     except re.error:
         err(f"Invalid regular expression for exclude given: {exclude!r}")
         exit(1)
@@ -150,11 +150,15 @@ def main(
     changes = False
     for notebook_path in sources:
 
-        click.secho(f"{notebook_path.resolve()} >", nl=False)
+        try:
+            notebook = nbformat.read(
+                open(notebook_path.resolve(), "r"), 
+                as_version=nbformat.NO_CONVERT
+            )
+        except nbformat.reader.NotJSONError:
+            continue
 
-        notebook = nbformat.read(
-            open(notebook_path.resolve(), "r"), as_version=nbformat.NO_CONVERT
-        )
+        click.secho(f"{notebook_path.resolve()} >", nl=False)
 
         formatted_cells = []
         for cell in notebook["cells"]:
