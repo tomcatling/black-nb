@@ -68,7 +68,7 @@ def re_compile_maybe_verbose(regex: str) -> Pattern[str]:
     "-l",
     "--line-length",
     type=int,
-    default=90,
+    default=88,
     help="How many characters per line to allow.",
     show_default=True,
 )
@@ -106,7 +106,11 @@ def re_compile_maybe_verbose(regex: str) -> Pattern[str]:
         "reformatted."
     ),
 )
-@click.option("--clear-output", is_flag=True, help=("Clear cell outputs."))
+@click.option(
+    "--clear-output",
+    is_flag=True,
+    help=("Clean cell output as part of formatting."),
+)
 def main(
     src: Tuple[str],
     line_length: int,
@@ -213,8 +217,12 @@ def handle_cell(
                 cell["source"] = formatted_source
 
         if clear_output:
-            cell["execution_count"] = None
-            cell["outputs"] = []
+            changes |= cell["execution_count"] == None
+            changes |= len(cell["outputs"]) == 0
+
+            if not check:
+                cell["execution_count"] = None
+                cell["outputs"] = 0
 
     return cell, changes
 
