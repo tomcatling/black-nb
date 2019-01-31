@@ -34,7 +34,7 @@ from functools import partial
 from pathlib import Path
 
 
-DEFAULT_EXCLUDES = r"/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist)/"
+DEFAULT_EXCLUDES = r"/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
 DEFAULT_INCLUDES = r"\.ipynb$"
 
 
@@ -163,13 +163,16 @@ def main(
                 try:
                     formatted_source = format_cell(cell["source"], line_length)
                 except black.InvalidInput:
-                    click.secho("*", nl=False)
+                    click.secho("*", nl=False, fg="red")
                 else:
-                    click.secho("-", nl=False)
+                    changes |= formatted_source != cell["source"]
 
-                    if check:
-                        changes |= formatted_source != cell["source"]
+                    if changes:
+                        click.secho("-", nl=False)
                     else:
+                        click.secho("-", nl=False, fg="green")
+
+                    if not check:
                         cell["source"] = formatted_source
 
             formatted_cells.append(cell)
