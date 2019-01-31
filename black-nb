@@ -103,11 +103,17 @@ def re_compile_maybe_verbose(regex: str) -> Pattern[str]:
     help=(
         "Don't write the files back, just return the status.  Return code 0 "
         "means nothing would change.  Return code 1 means some files would be "
-        "reformatted.  Return code 123 means there was an internal error."
+        "reformatted."
     ),
 )
+@click.option("--clear-output", is_flag=True, help=("Clear cell outputs."))
 def main(
-    src: Tuple[str], line_length: int, include: str, exclude: str, check: bool
+    src: Tuple[str],
+    line_length: int,
+    include: str,
+    exclude: str,
+    check: bool,
+    clear_output: bool,
 ) -> None:
     """Apply black to code cells in jupyter notebooks
     underneath the src path."""
@@ -152,8 +158,8 @@ def main(
 
         try:
             notebook = nbformat.read(
-                open(notebook_path.resolve(), "r"), 
-                as_version=nbformat.NO_CONVERT
+                open(notebook_path.resolve(), "r"),
+                as_version=nbformat.NO_CONVERT,
             )
         except nbformat.reader.NotJSONError:
             continue
@@ -161,24 +167,11 @@ def main(
         click.secho(f"{notebook_path.resolve()} >", nl=False)
 
         formatted_cells = []
+        changes = False
         for cell in notebook["cells"]:
-
-            if cell["cell_type"] == "code":
-                try:
-                    formatted_source = format_cell(cell["source"], line_length)
-                except black.InvalidInput:
-                    click.secho("*", nl=False, fg="red")
-                else:
-                    changes |= formatted_source != cell["source"]
-
-                    if changes:
-                        click.secho("-", nl=False)
-                    else:
-                        click.secho("-", nl=False, fg="green")
-
-                    if not check:
-                        cell["source"] = formatted_source
-
+            cell, changes = handle_cell(
+                cell, changes, check, clear_output, line_length
+            )
             formatted_cells.append(cell)
 
         notebook["cells"] = formatted_cells
@@ -193,6 +186,37 @@ def main(
             out("OK")
             exit(0)
     exit(0)
+
+
+def handle_cell(
+    cell: dict,
+    changes: bool,
+    check: bool,
+    clear_output: bool,
+    line_length: int,
+) -> dict:
+
+    if cell["cell_type"] == "code":
+        try:
+            formatted_source = format_cell(cell["source"], line_length)
+        except black.InvalidInput:
+            click.secho("*", nl=False, fg="red")
+        else:
+            changes |= formatted_source != cell["source"]
+
+            if changes:
+                click.secho("-", nl=False)
+            else:
+                click.secho("-", nl=False, fg="green")
+
+            if not check:
+                cell["source"] = formatted_source
+
+        if clear_output:
+            cell["execution_count"] = None
+            cell["outputs"] = []
+
+    return cell, changes
 
 
 def format_cell(source: str, line_length: int) -> str:
