@@ -14,7 +14,7 @@ def read_long_description() -> str:
 
 
 setup(
-    name="nb-black",
+    name="black-nb",
     version="0.0.1",
     description="Apply black to all code cells in a jupyter notebook.",
     long_description=read_long_description(),
