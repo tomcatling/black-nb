@@ -11,19 +11,19 @@ Python 3.6.0+ to run but you can reformat Python 2 code with it, too.
 
 ## Usage
 
-To apply black with a line length of 120 to all notebooks under the current directory:
+To apply *black* with a line length of 120 to all code cells in notebooks under the current directory:
 
 ```bash
 black-nb . -l 120
 ```
 
-To check if notebooks pass black, including have no output:
+To check if notebooks pass *black*, including have no output:
 
 ```bash
 black-nb . -l 120 --clear-output --check
 ```
 
-To exclude a `./outputs/*` :
+To exclude reformat everything below `./` excluding `./outputs/*` :
 
 ```bash
 black-nb . -l 120 --exclude outputs
