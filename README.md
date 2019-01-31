@@ -1,28 +1,64 @@
 # black-nb
 
-`black-nb` applies [black](https://github.com/ambv/black) to the code cells of Jupyter notebooks. It can be called with a list of files or directories and will search for all files ending with '.ipynb', excluding paths containing '.ipynb_checkpoints'. Additional exclusions can be added using one or 
-more `-x` options (wildcards not supported), line length can be configured with `-l`.
+*black-nb* applies [*black*](https://github.com/ambv/black) to Jupyter notebooks.
 
-Non-code cells and cells with cell magic (anything starting with '%%') will be excluded. Line magic ('%') will be treated as a comment
-and restored after reformatting.
-
-Notebooks are modified inplace.
+Much of the code is taken from the original *black* project and the behaviour is intentionally similar.
  
 ## Installation
 
-```bash
-pip install git+git://github.com/tomcatling/black-nb.git#egg=black-nb
-```
-
-`black-nb` requires Python 3.6 or later.
+*black-nb* can be installed by running `pip install black-nb`.  It requires
+Python 3.6.0+ to run but you can reformat Python 2 code with it, too.
 
 ## Usage
 
-To apply black with a line length of 88 to all notebooks under the current directory, excluding anything with 'example' in its path and 'messy.ipynb' in the current directory:
+To apply black with a line length of 120 to all notebooks under the current directory:
 
 ```bash
-black-nb . -l 88 -x example -x ./messy.ipynb
+black-nb . -l 120
 ```
+
+To check if notebooks pass black, including have no output:
+
+```bash
+black-nb . -l 120 --clear-output --check
+```
+
+To exclude a `./outputs/*` :
+
+```bash
+black-nb . -l 120 --exclude outputs
+```
+
+## Command Line Options
+
+*black-nb* doesn't provide many options.  You can list them by running
+`black --help`:
+
+```text
+black [OPTIONS] [SRC]...
+
+Options:
+  -l, --line-length INTEGER   Where to wrap around.  [default: 88]
+                              Don't normalize underscores in numeric literals.
+  --check                     Don't write the files back, just return the
+                              status.  Return code 0 means nothing would
+                              change.  Return code 1 means some files would be
+                              reformatted.  Return code 123 means there was an
+                              internal error.
+  --include TEXT              A regular expression that matches files and
+                              directories that should be included on
+                              recursive searches. On Windows, use forward
+                              slashes for directories.  [default: \.ipynb$]
+  --exclude TEXT              A regular expression that matches files and
+                              directories that should be excluded on
+                              recursive searches. On Windows, use forward
+                              slashes for directories.  [default:
+                              build/|buck-out/|dist/|_build/|\.eggs/|\.git/|
+                              \.hg/|\.mypy_cache/|\.nox/|\.tox/|\.venv/|\.ipynb_checkpoints]
+  --clear-output              Clearing code output is included in formatting.
+  --help                      Show this message and exit.
+```
+
 
 ## Copyright
 
