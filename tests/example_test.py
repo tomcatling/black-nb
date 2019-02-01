@@ -1,5 +1,6 @@
 import importlib
-black_nb = importlib.machinery.SourceFileLoader('black-nb', './black-nb')
+loader = importlib.machinery.SourceFileLoader('black-nb', './black-nb')
+black_nb = loader.load_module()
 
 import click
 from click.testing import CliRunner
