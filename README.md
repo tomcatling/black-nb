@@ -31,7 +31,7 @@ black-nb --clear-output .
 To check if notebooks pass *black* and additionally have no output (files will be unchanged):
 
 ```bash
-black-nb -l 88 --clear-output --check .
+black-nb --clear-output --check .
 ```
 
 To reformat everything below `./` excluding `./outputs/*` and `*.ipynb_checkpoints/*` :
@@ -49,7 +49,6 @@ black-nb [OPTIONS] [SRC]...
 
 Options:
   -l, --line-length INTEGER   Where to wrap around.  [default: 88]
-                              Don't normalize underscores in numeric literals.
                               
   --check                     Don't write the files back, just return the
                               status.  Return code 0 means nothing would
