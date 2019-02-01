@@ -1,8 +1,10 @@
-# black-nb
+<h1 align="center">black-nb :notebook: </h2>
 
-[![CircleCI](https://circleci.com/gh/tomcatling/black-nb.svg?style=shield)](https://circleci.com/gh/tomcatling/black-nb)
-[![image](https://codecov.io/github/tomcatling/black-nb/coverage.svg?branch=master)](https://codecov.io/github/tomcatling/black-nb?branch=master)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+<p align="center">
+<a href="https://circleci.com/gh/tomcatling/black-nb"><img alt="Build Status" src="https://circleci.com/gh/tomcatling/black-nb.svg?style=shield"></a>
+<a href="https://codecov.io/github/tomcatling/black-nb?branch=master"><img alt="Code Coverage" src="https://codecov.io/github/tomcatling/black-nb/coverage.svg?branch=master"></a>
+<a href="https://github.com/ambv/black"><img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
 
 
 *black-nb* applies [*black*](https://github.com/ambv/black) to Jupyter notebooks.
@@ -11,33 +13,36 @@ Much of the code is taken from the original *black* project and the behaviour is
  
 ## Installation
 
-*black-nb* can be installed by running `pip install black-nb`.  It requires
-Python 3.6.0+ to run but you can reformat Python 2 code with it, too.
+`pip install black-nb`
 
 ## Usage
 
-To apply *black* with a line length of 120 to all code cells in notebooks under the current directory:
+To apply *black* to all code cells in notebooks under the current directory:
 
 ```bash
-black-nb . -l 120
+black-nb .
+```
+To clear cell outputs in addition to reformatting:
+
+```bash
+black-nb --clear-output .
 ```
 
-To check if notebooks pass *black*, including have no output:
+To check if notebooks pass *black* and additionally have no output (files will be unchanged):
 
 ```bash
-black-nb . -l 120 --clear-output --check
+black-nb -l 88 --clear-output --check .
 ```
 
-To exclude reformat everything below `./` excluding `./outputs/*` :
+To reformat everything below `./` excluding `./outputs/*` and `*.ipynb_checkpoints/*` :
 
 ```bash
-black-nb . -l 120 --exclude outputs
+black-nb --exclude /(outputs|\.ipynb_checkpoints)/ .
 ```
 
 ## Command Line Options
 
-*black-nb* doesn't provide many options.  You can list them by running
-`black-nb --help`:
+*black-nb* doesn't provide many options.  You can list them by running `black-nb --help`:
 
 ```text
 black-nb [OPTIONS] [SRC]...
@@ -45,22 +50,27 @@ black-nb [OPTIONS] [SRC]...
 Options:
   -l, --line-length INTEGER   Where to wrap around.  [default: 88]
                               Don't normalize underscores in numeric literals.
+                              
   --check                     Don't write the files back, just return the
                               status.  Return code 0 means nothing would
                               change.  Return code 1 means some files would be
                               reformatted.  Return code 123 means there was an
                               internal error.
+                              
   --include TEXT              A regular expression that matches files and
                               directories that should be included on
                               recursive searches. On Windows, use forward
                               slashes for directories.  [default: \.ipynb$]
+                              
   --exclude TEXT              A regular expression that matches files and
                               directories that should be excluded on
                               recursive searches. On Windows, use forward
                               slashes for directories.  [default:
                               build/|buck-out/|dist/|_build/|\.eggs/|\.git/|
                               \.hg/|\.mypy_cache/|\.nox/|\.tox/|\.venv/|\.ipynb_checkpoints]
+                              
   --clear-output              Clearing code output is included in formatting.
+  
   --help                      Show this message and exit.
 ```
 
