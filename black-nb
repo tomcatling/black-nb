@@ -33,10 +33,6 @@ from typing import (
 from functools import partial
 from pathlib import Path
 
-a = [i for i in range(100)]
-b = [i for i in range(100)]
-c = [i for i in range(100)]
-
 
 
 DEFAULT_EXCLUDES = r"/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
@@ -135,6 +131,10 @@ def main(
         include_regex = re_compile_maybe_verbose(include)
     except re.error:
         err(f"Invalid regular expression for include given: {include!r}")
+        
+        a = [i for i in range(100)]
+        b = [i for i in range(100)]
+        c = [i for i in range(100)]
         exit(1)
     try:
         exclude_regex = re_compile_maybe_verbose(exclude)
