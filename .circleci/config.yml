@@ -10,7 +10,7 @@ jobs:
           command: pip install --user --quiet black nbformat click
       - run:
           name: Installation
-          command: python setup.py install
+          command: python setup.py install --user
   test:
     docker:
       - image: circleci/python
@@ -19,6 +19,9 @@ jobs:
       - run:
           name: Pip dependencies
           command: pip install --user --quiet black nbformat click
+      - run:
+          name: Installation
+          command: python setup.py install --user
 workflows:
   version: 2
   build_and_test:
