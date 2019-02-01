@@ -7,10 +7,13 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: pip install --user --quiet black nbformat click
+          command: pip install --user --quiet black nbformat click codecov
       - run:
           name: Installation
           command: python setup.py install --user
+      - run:
+          name: CodeCov
+          command: codecov --token=89bcbe24-dc19-41f7-b9e9-b93e1c376a2d
 workflows:
   version: 2
   build_and_test:
