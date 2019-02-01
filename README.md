@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/tomcatling/black-nb.svg?style=shield)](https://circleci.com/gh/tomcatling/black-nb)
+
 # black-nb
 
 *black-nb* applies [*black*](https://github.com/ambv/black) to Jupyter notebooks.
