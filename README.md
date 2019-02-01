@@ -1,6 +1,9 @@
-[![CircleCI](https://circleci.com/gh/tomcatling/black-nb.svg?style=shield)](https://circleci.com/gh/tomcatling/black-nb)
-
 # black-nb
+
+[![CircleCI](https://circleci.com/gh/tomcatling/black-nb.svg?style=shield)](https://circleci.com/gh/tomcatling/black-nb)
+[![image](https://codecov.io/github/tomcatling/black-nb/coverage.svg?branch=master)](https://codecov.io/github/tomcatling/black-nb?branch=master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 
 *black-nb* applies [*black*](https://github.com/ambv/black) to Jupyter notebooks.
 
