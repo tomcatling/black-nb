@@ -3,21 +3,19 @@ jobs:
   build:
     docker:
       - image: circleci/python
-      - user: root
     steps:
       - checkout
       - run:
           name: Pip dependencies
-          command: pip install --quiet black nbformat click
+          command: pip install --user --quiet black nbformat click
   test:
     docker:
       - image: circleci/python
-      - user: root
     steps:
       - checkout
       - run:
           name: Pip dependencies
-          command: pip install --quiet black nbformat click
+          command: pip install --user --quiet black nbformat click
 workflows:
   version: 2
   build_and_test:
