@@ -1,5 +1,5 @@
-import imp
-black_nb = imp.load_source('black-nb', '../black-nb')
+import importlib
+black_nb = importlib.load_module('black-nb', './black-nb')
 
 import click
 from click.testing import CliRunner
