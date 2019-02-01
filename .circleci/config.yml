@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/python
+      - user: root
     steps:
       - checkout
       - run:
@@ -11,6 +12,7 @@ jobs:
   test:
     docker:
       - image: circleci/python
+      - user: root
     steps:
       - checkout
       - run:
