@@ -8,6 +8,9 @@ jobs:
       - run:
           name: Pip dependencies
           command: pip install --user --quiet black nbformat click
+      - run:
+          name: Installation
+          command: cd black-nb && python setup.py install
   test:
     docker:
       - image: circleci/python
