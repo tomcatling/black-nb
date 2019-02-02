@@ -1,16 +1,40 @@
-from dataclasses import dataclass, field
+import io
+import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Set, Tuple, Dict, List
 
 import black
 import click
 import nbformat
-from appdirs import user_cache_dir
 
-__version__ = "0.0.1"
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
-CACHE_DIR = Path(user_cache_dir("black", version=__version__))
+DEFAULT_EXCLUDES = (
+    r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
+)
+
+
+
+# TODO: Load pyproject.toml
+# TODO: tests
+# TODO: versions like faculty. scm?
+# TODO: tox
+# TODO: verbose and quiet flags.
+# TODO: Catch unreadable notebook
+# TODO: Fix doc strings
+# TODO: Bug in black? write_back == write_back.DIFF should be write_back == WriteBack.DIFF
+# TODO: lower bounds on requirements in setup.py
+
+
+
+
+# TODO: include / exclude flags
+# TODO: trailing comma
+# TODO: Log clearing cell output
+# TODO: Add back diff option
+
+
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -68,9 +92,9 @@ def main(
     )
 
     include_regex = black.re_compile_maybe_verbose(DEFAULT_INCLUDES)
-    exclude_regex = black.re_compile_maybe_verbose(black.DEFAULT_EXCLUDES)
+    exclude_regex = black.re_compile_maybe_verbose(DEFAULT_EXCLUDES)
 
-    report = black.Report(check=check, quiet=False, verbose=True)
+    report = black.Report(check=check, quiet=False, verbose=False)
     root = black.find_project_root(src)
     sources: Set[Path] = set()
     for s in src:
@@ -111,18 +135,20 @@ def reformat_one(
     write_back: black.WriteBack,
     mode: black.FileMode,
     clear_output: bool,
-    report: "Report",
+    report: black.Report,
 ) -> None:
     """Reformat a single file under `src`."""
     try:
         changed = black.Changed.NO
 
-        cache = black.read_cache(line_length, mode)
-        res_src = src.resolve()
-        if res_src in cache and cache[res_src] == black.get_cache_info(
-            res_src
-        ):
-            changed = black.Changed.CACHED
+        cache: black.Cache = {}
+        if write_back is not black.WriteBack.DIFF:
+            cache = black.read_cache(line_length, mode)
+            res_src = src.resolve()
+            if res_src in cache and cache[res_src] == black.get_cache_info(
+                res_src
+            ):
+                changed = black.Changed.CACHED
         if changed is not black.Changed.CACHED:
             sub_report = format_file_in_place(
                 src,
@@ -157,9 +183,7 @@ def format_file_in_place(
 
     If `write_back` is YES, write reformatted code to the file.
     """
-    # TODO: Set check properly
-    check = True if mode is black.WriteBack.CHECK else False
-    sub_report = SubReport(check=check)
+    sub_report = SubReport(write_back=write_back)
 
     with src.open() as fp:
         src_contents = nbformat.read(fp, as_version=nbformat.NO_CONVERT)
@@ -169,7 +193,7 @@ def format_file_in_place(
         if cell["cell_type"] == "code":
             try:
                 cell["source"] = format_cell_source(
-                    cell["source"], line_length=line_length, mode=mode
+                    cell["source"], line_length=line_length, mode=mode, write_back=write_back
                 )
                 sub_report.done(black.Changed.YES)
             except black.NothingChanged:
@@ -186,7 +210,7 @@ def format_file_in_place(
     click.echo(src)
     click.secho(f"    {sub_report}", err=True)
 
-    if write_back == write_back.YES:
+    if write_back is black.WriteBack.YES:
         with src.open("w") as fp:
             nbformat.write(src_contents, fp)
 
@@ -194,7 +218,7 @@ def format_file_in_place(
 
 
 def format_cell_source(
-    src_contents: str, *, line_length: int, mode: black.FileMode
+    src_contents: str, *, line_length: int, mode: black.FileMode, write_back: black.WriteBack
 ) -> black.FileContent:
     """Reformat contents of cell and return new contents.
 
@@ -206,22 +230,43 @@ def format_cell_source(
     if src_contents.strip() == "":
         raise black.NothingChanged
 
-    # src_contents = _hide_magic(src_contents)
-
-    dst_contents = black.format_str(
+    dst_contents = format_str(
         src_contents, line_length=line_length, mode=mode
     )
 
     if src_contents == dst_contents:
         raise black.NothingChanged
 
-    black.assert_equivalent(src_contents, dst_contents)
-    black.assert_stable(
-        src_contents, dst_contents, line_length=line_length, mode=mode
+    assert_equivalent(src_contents, dst_contents)
+    assert_stable(
+        dst_contents, line_length=line_length, mode=mode
     )
 
-    # dst_contents = _reveal_magic(dst_contents)
+    return dst_contents
 
+
+def assert_equivalent(src: str, dst: str) -> None:
+    black.assert_equivalent(_hide_magic(src), _hide_magic(dst))
+
+
+def assert_stable(
+    dst: str, line_length: int, mode: black.FileMode = black.FileMode.AUTO_DETECT
+) -> None:
+    new_dst = format_str(dst, line_length=line_length, mode=mode)
+    if dst != new_dst:
+        raise AssertionError(
+            "INTERNAL ERROR: Black produced different code on the second pass "
+            "of the formatter."
+        ) from None
+
+
+def format_str(
+    src_contents: str, line_length: int, *, mode: black.FileMode = black.FileMode.AUTO_DETECT
+) -> black.FileContent:
+    src_contents = _hide_magic(src_contents)
+    dst_contents = black.format_str(src_contents, line_length=line_length, mode=mode)
+    dst_contents = dst_contents.rstrip()
+    dst_contents = _reveal_magic(dst_contents)
     return dst_contents
 
 
@@ -242,7 +287,7 @@ def _hide_magic(source: str) -> str:
     def _hide_magic_line(line: str) -> str:
         return f"###MAGIC###{line}" if _contains_magic(line) else line
 
-    return "\n".join(_hide_magic_line(l) for l in source.splitlines())
+    return "\n".join(_hide_magic_line(l) for l in source.split("\n"))
 
 
 def _reveal_magic(source: str) -> str:
@@ -259,7 +304,8 @@ class SubReport:
 
     Can be rendered with `str(report)`.
     """
-    check: bool = False
+
+    write_back: black.WriteBack
     change_count: int = 0
     same_count: int = 0
     failure_count: int = 0
@@ -283,7 +329,7 @@ class SubReport:
         """
         Render a report of the current state.
         """
-        if self.check:
+        if self.write_back is black.WriteBack.CHECK:
             reformatted = "would be reformatted"
             unchanged = "would be left unchanged"
             failed = "would fail to reformat"
