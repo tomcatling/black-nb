@@ -23,6 +23,11 @@ setup(
     author="Tom Catling",
     author_email="tomcatling@gmail.com",
     license="ISC",
-    scripts=["black-nb"],
+    py_modules=["black"],
+    entry_points={
+        "console_scripts" : [
+            "black-nb=black_nb:main"
+        ]
+    },
     install_requires=["nbformat", "black"],
 )
