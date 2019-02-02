@@ -1,8 +1,7 @@
-import io
-import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Set, Tuple, Dict, List
+import re
+from typing import Set, Tuple, Dict, List, Optional
 
 import black
 import click
@@ -13,28 +12,6 @@ DEFAULT_INCLUDES = r"\.ipynb$"
 DEFAULT_EXCLUDES = (
     r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
 )
-
-
-
-# TODO: Load pyproject.toml
-# TODO: tests
-# TODO: versions like faculty. scm?
-# TODO: tox
-# TODO: verbose and quiet flags.
-# TODO: Catch unreadable notebook
-# TODO: Fix doc strings
-# TODO: Bug in black? write_back == write_back.DIFF should be write_back == WriteBack.DIFF
-# TODO: lower bounds on requirements in setup.py
-
-
-
-
-# TODO: include / exclude flags
-# TODO: trailing comma
-# TODO: Log clearing cell output
-# TODO: Add back diff option
-
-
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -56,6 +33,31 @@ DEFAULT_EXCLUDES = (
     ),
 )
 @click.option(
+    "--include",
+    type=str,
+    default=DEFAULT_INCLUDES,
+    help=(
+        "A regular expression that matches files and directories that should be "
+        "included on recursive searches.  An empty value means all files are "
+        "included regardless of the name.  Use forward slashes for directories on "
+        "all platforms (Windows, too).  Exclusions are calculated first, inclusions "
+        "later."
+    ),
+    show_default=True,
+)
+@click.option(
+    "--exclude",
+    type=str,
+    default=DEFAULT_EXCLUDES,
+    help=(
+        "A regular expression that matches files and directories that should be "
+        "excluded on recursive searches.  An empty value means no paths are excluded. "
+        "Use forward slashes for directories on all platforms (Windows, too).  "
+        "Exclusions are calculated first, inclusions later."
+    ),
+    show_default=True,
+)
+@click.option(
     "--clear-output",
     is_flag=True,
     help="Clear cell output as part of formatting.",
@@ -72,13 +74,25 @@ DEFAULT_EXCLUDES = (
     ),
     is_eager=True,
 )
+@click.option(
+    "--config",
+    type=click.Path(
+        exists=False, file_okay=True, dir_okay=False, readable=True, allow_dash=False
+    ),
+    is_eager=True,
+    callback=black.read_pyproject_toml,
+    help="Read configuration from PATH.",
+)
 @click.pass_context
 def main(
     ctx: click.Context,
     line_length: int,
     check: bool,
-    clear_output,
+    include: str,
+    exclude: str,
+    clear_output: bool,
     src: Tuple[str],
+    config: Optional[str],
 ) -> None:
     """
     The uncompromising code formatter, for Jupyter notebooks.
@@ -91,8 +105,19 @@ def main(
         skip_numeric_underscore_normalization=False,
     )
 
-    include_regex = black.re_compile_maybe_verbose(DEFAULT_INCLUDES)
-    exclude_regex = black.re_compile_maybe_verbose(DEFAULT_EXCLUDES)
+    if config:
+        black.out(f"Using configuration from {config}.", bold=False, fg="blue")
+
+    try:
+        include_regex = black.re_compile_maybe_verbose(include)
+    except re.error:
+        black.err(f"Invalid regular expression for include given: {include!r}")
+        ctx.exit(2)
+    try:
+        exclude_regex = black.re_compile_maybe_verbose(exclude)
+    except re.error:
+        black.err(f"Invalid regular expression for exclude given: {exclude!r}")
+        ctx.exit(2)
 
     report = black.Report(check=check, quiet=False, verbose=False)
     root = black.find_project_root(src)
@@ -139,6 +164,8 @@ def reformat_one(
 ) -> None:
     """Reformat a single file under `src`."""
     try:
+
+        sub_report = SubReport(write_back=write_back)
         changed = black.Changed.NO
 
         cache: black.Cache = {}
@@ -156,6 +183,7 @@ def reformat_one(
                 write_back=write_back,
                 mode=mode,
                 clear_output=clear_output,
+                sub_report=sub_report
             )
             if sub_report.change_count:
                 changed = black.Changed.YES
@@ -167,6 +195,8 @@ def reformat_one(
         ):
             black.write_cache(cache, [src], line_length, mode)
         report.done(src, changed)
+        if changed is not black.Changed.CACHED:
+            click.secho(f"    {sub_report}", err=True)
     except Exception as exc:
         report.failed(src, str(exc))
 
@@ -177,13 +207,13 @@ def format_file_in_place(
     write_back: black.WriteBack,
     mode: black.FileMode,
     clear_output: bool,
+    sub_report: "SubReport",
 ) -> "SubReport":
     """
     Format file under `src` path. Return True if changed.
 
     If `write_back` is YES, write reformatted code to the file.
     """
-    sub_report = SubReport(write_back=write_back)
 
     with src.open() as fp:
         src_contents = nbformat.read(fp, as_version=nbformat.NO_CONVERT)
@@ -193,7 +223,7 @@ def format_file_in_place(
         if cell["cell_type"] == "code":
             try:
                 cell["source"] = format_cell_source(
-                    cell["source"], line_length=line_length, mode=mode, write_back=write_back
+                    cell["source"], line_length=line_length, mode=mode
                 )
                 sub_report.done(black.Changed.YES)
             except black.NothingChanged:
@@ -201,14 +231,18 @@ def format_file_in_place(
             except black.InvalidInput:
                 sub_report.failed()
             if clear_output:
-                # TODO: Log this
-                cell["execution_count"] = None
-                cell["outputs"] = []
+                try:
+                    cell["outputs"], cell["execution_count"] = clear_cell_outputs(
+                        cell["outputs"], cell["execution_count"]
+                    )
+                    sub_report.done_output(black.Changed.YES)
+                except black.NothingChanged:
+                    sub_report.done_output(black.Changed.NO)
         dst_cells.append(cell)
     src_contents["cells"] = dst_cells
 
-    click.echo(src)
-    click.secho(f"    {sub_report}", err=True)
+    # click.echo(src)
+    # click.secho(f"    {sub_report}", err=True)
 
     if write_back is black.WriteBack.YES:
         with src.open("w") as fp:
@@ -217,8 +251,14 @@ def format_file_in_place(
     return sub_report
 
 
+def clear_cell_outputs(src_outputs: List[str], src_execution_count: int) -> Tuple[List[str], None]:
+    if src_outputs == [] and src_execution_count is None:
+        raise black.NothingChanged
+    return [], None
+
+
 def format_cell_source(
-    src_contents: str, *, line_length: int, mode: black.FileMode, write_back: black.WriteBack
+    src_contents: str, *, line_length: int, mode: black.FileMode
 ) -> black.FileContent:
     """Reformat contents of cell and return new contents.
 
@@ -245,8 +285,21 @@ def format_cell_source(
     return dst_contents
 
 
+def format_str(
+    src_contents: str, line_length: int, *, mode: black.FileMode = black.FileMode.AUTO_DETECT
+) -> black.FileContent:
+    trailing_semi_colon = src_contents.rstrip()[-1] == ";"
+    src_contents = hide_magic(src_contents)
+    dst_contents = black.format_str(src_contents, line_length=line_length, mode=mode)
+    dst_contents = dst_contents.rstrip()
+    if trailing_semi_colon:
+        dst_contents = f"{dst_contents};"
+    dst_contents = reveal_magic(dst_contents)
+    return dst_contents
+
+
 def assert_equivalent(src: str, dst: str) -> None:
-    black.assert_equivalent(_hide_magic(src), _hide_magic(dst))
+    black.assert_equivalent(hide_magic(src), hide_magic(dst))
 
 
 def assert_stable(
@@ -260,24 +313,14 @@ def assert_stable(
         ) from None
 
 
-def format_str(
-    src_contents: str, line_length: int, *, mode: black.FileMode = black.FileMode.AUTO_DETECT
-) -> black.FileContent:
-    src_contents = _hide_magic(src_contents)
-    dst_contents = black.format_str(src_contents, line_length=line_length, mode=mode)
-    dst_contents = dst_contents.rstrip()
-    dst_contents = _reveal_magic(dst_contents)
-    return dst_contents
-
-
-def _contains_magic(line: str) -> bool:
+def contains_magic(line: str) -> bool:
     if len(line) == 0:
         return False
     else:
         return line[0] == "%" or line[0] == "!"
 
 
-def _hide_magic(source: str) -> str:
+def hide_magic(source: str) -> str:
     """
     Black can't deal with cell or line magic, so we
     disguise it as a comment. This keeps it in the same
@@ -285,12 +328,12 @@ def _hide_magic(source: str) -> str:
     """
 
     def _hide_magic_line(line: str) -> str:
-        return f"###MAGIC###{line}" if _contains_magic(line) else line
+        return f"###MAGIC###{line}" if contains_magic(line) else line
 
     return "\n".join(_hide_magic_line(l) for l in source.split("\n"))
 
 
-def _reveal_magic(source: str) -> str:
+def reveal_magic(source: str) -> str:
     """
     Reveal any notebook magic hidden by hide_magic().
     """
@@ -309,6 +352,8 @@ class SubReport:
     change_count: int = 0
     same_count: int = 0
     failure_count: int = 0
+    output_change_count: int = 0
+    output_same_count: int = 0
 
     def done(self, changed: black.Changed) -> None:
         """
@@ -318,6 +363,15 @@ class SubReport:
             self.change_count += 1
         else:
             self.same_count += 1
+
+    def done_output(self, changed: black.Changed) -> None:
+        """
+        Increment the counter for successful clear output.
+        """
+        if changed is black.Changed.YES:
+            self.output_change_count += 1
+        else:
+            self.output_same_count += 1
 
     def failed(self) -> None:
         """
@@ -333,10 +387,12 @@ class SubReport:
             reformatted = "would be reformatted"
             unchanged = "would be left unchanged"
             failed = "would fail to reformat"
+            cleared = "would be cleared"
         else:
             reformatted = "reformatted"
             unchanged = "left unchanged"
             failed = "failed to reformat"
+            cleared = "cleared"
         report = []
         if self.change_count:
             s = "s" if self.change_count > 1 else ""
@@ -353,6 +409,16 @@ class SubReport:
             report.append(
                 click.style(f"{self.failure_count} cell{s} {failed}", fg="red")
             )
+        if self.output_change_count:
+            s = "s" if self.change_count > 1 else ""
+            report.append(
+                click.style(
+                    f"{self.change_count} output{s} {cleared}", bold=True
+                )
+            )
+        if self.output_same_count:
+            s = "s" if self.same_count > 1 else ""
+            report.append(f"{self.same_count} output{s} {unchanged}")
         return ", ".join(report) + "."
 
 

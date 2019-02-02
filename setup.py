@@ -24,5 +24,5 @@ setup(
     author_email="tomcatling@gmail.com",
     license="ISC",
     scripts=["black-nb"],
-    install_requires=["nbformat", "black"],
+    install_requires=["nbformat", "black", "click"],
 )
