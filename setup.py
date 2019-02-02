@@ -23,7 +23,7 @@ setup(
     author="Tom Catling",
     author_email="tomcatling@gmail.com",
     license="ISC",
-    py_modules=["black"],
+    py_modules=["black_nb"],
     entry_points={
         "console_scripts" : [
             "black-nb=black_nb:main"
