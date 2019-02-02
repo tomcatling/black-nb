@@ -1,16 +1,11 @@
-#import importlib
-#loader = importlib.machinery.SourceFileLoader('black-nb', './black-nb')
-#black_nb = loader.load_module()
-
 import black_nb
 import click
 from click.testing import CliRunner
 
-def test_hello_world():
+def test_basic():
     runner = CliRunner()
     result = runner.invoke(black_nb.main, ['.'])
-    #assert result.exit_code == 0
-    #assert result.output == 'Hello Peter!\n'
-    return result
+    assert result.exit_code == 0
     
-test_hello_world()
+if __name__ == "__main__":
+    test_basic()
