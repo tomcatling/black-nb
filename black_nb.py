@@ -9,7 +9,10 @@ import nbformat
 
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
-DEFAULT_EXCLUDES = r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
+DEFAULT_EXCLUDES = (
+    r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|"
+    r"\.ipynb_checkpoints)/"
+)
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -35,11 +38,11 @@ DEFAULT_EXCLUDES = r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-ou
     type=str,
     default=DEFAULT_INCLUDES,
     help=(
-        "A regular expression that matches files and directories that should be "
-        "included on recursive searches.  An empty value means all files are "
-        "included regardless of the name.  Use forward slashes for directories on "
-        "all platforms (Windows, too).  Exclusions are calculated first, inclusions "
-        "later."
+        "A regular expression that matches files and directories that should "
+        "be included on recursive searches.  An empty value means all files "
+        "are included regardless of the name.  Use forward slashes for "
+        "directories on all platforms (Windows, too).  Exclusions are "
+        "calculated first, inclusions later."
     ),
     show_default=True,
 )
@@ -48,10 +51,10 @@ DEFAULT_EXCLUDES = r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-ou
     type=str,
     default=DEFAULT_EXCLUDES,
     help=(
-        "A regular expression that matches files and directories that should be "
-        "excluded on recursive searches.  An empty value means no paths are excluded. "
-        "Use forward slashes for directories on all platforms (Windows, too).  "
-        "Exclusions are calculated first, inclusions later."
+        "A regular expression that matches files and directories that should "
+        "be excluded on recursive searches. An empty value means no paths are "
+        "excluded. Use forward slashes for directories on all platforms "
+        "(Windows, too). Exclusions are calculated first, inclusions later."
     ),
     show_default=True,
 )
