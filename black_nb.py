@@ -9,9 +9,7 @@ import nbformat
 
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
-DEFAULT_EXCLUDES = (
-    r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
-)
+DEFAULT_EXCLUDES = r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|\.ipynb_checkpoints)/"
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -77,7 +75,11 @@ DEFAULT_EXCLUDES = (
 @click.option(
     "--config",
     type=click.Path(
-        exists=False, file_okay=True, dir_okay=False, readable=True, allow_dash=False
+        exists=False,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        allow_dash=False,
     ),
     is_eager=True,
     callback=black.read_pyproject_toml,
@@ -183,7 +185,7 @@ def reformat_one(
                 write_back=write_back,
                 mode=mode,
                 clear_output=clear_output,
-                sub_report=sub_report
+                sub_report=sub_report,
             )
             if sub_report.change_count:
                 changed = black.Changed.YES
@@ -231,7 +233,9 @@ def format_file_in_place(
                 sub_report.failed()
             if clear_output:
                 try:
-                    cell["outputs"], cell["execution_count"] = clear_cell_outputs(
+                    cell["outputs"], cell[
+                        "execution_count"
+                    ] = clear_cell_outputs(
                         cell["outputs"], cell["execution_count"]
                     )
                     sub_report.done_output(black.Changed.YES)
@@ -250,7 +254,9 @@ def format_file_in_place(
     return sub_report
 
 
-def clear_cell_outputs(src_outputs: List[str], src_execution_count: int) -> Tuple[List[str], None]:
+def clear_cell_outputs(
+    src_outputs: List[str], src_execution_count: int
+) -> Tuple[List[str], None]:
     if src_outputs == [] and src_execution_count is None:
         raise black.NothingChanged
     return [], None
@@ -268,27 +274,28 @@ def format_cell_source(
     if src_contents.strip() == "":
         raise black.NothingChanged
 
-    dst_contents = format_str(
-        src_contents, line_length=line_length, mode=mode
-    )
+    dst_contents = format_str(src_contents, line_length=line_length, mode=mode)
 
     if src_contents == dst_contents:
         raise black.NothingChanged
 
     assert_equivalent(src_contents, dst_contents)
-    assert_stable(
-        dst_contents, line_length=line_length, mode=mode
-    )
+    assert_stable(dst_contents, line_length=line_length, mode=mode)
 
     return dst_contents
 
 
 def format_str(
-    src_contents: str, line_length: int, *, mode: black.FileMode = black.FileMode.AUTO_DETECT
+    src_contents: str,
+    line_length: int,
+    *,
+    mode: black.FileMode = black.FileMode.AUTO_DETECT,
 ) -> black.FileContent:
     trailing_semi_colon = src_contents.rstrip()[-1] == ";"
     src_contents = hide_magic(src_contents)
-    dst_contents = black.format_str(src_contents, line_length=line_length, mode=mode)
+    dst_contents = black.format_str(
+        src_contents, line_length=line_length, mode=mode
+    )
     dst_contents = dst_contents.rstrip()
     if trailing_semi_colon:
         dst_contents = f"{dst_contents};"
@@ -301,7 +308,9 @@ def assert_equivalent(src: str, dst: str) -> None:
 
 
 def assert_stable(
-    dst: str, line_length: int, mode: black.FileMode = black.FileMode.AUTO_DETECT
+    dst: str,
+    line_length: int,
+    mode: black.FileMode = black.FileMode.AUTO_DETECT,
 ) -> None:
     new_dst = format_str(dst, line_length=line_length, mode=mode)
     if dst != new_dst:

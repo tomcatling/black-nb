@@ -1,4 +1,3 @@
-
 """Setup module for black-nb."""
 
 from pathlib import Path
@@ -24,10 +23,6 @@ setup(
     author_email="tomcatling@gmail.com",
     license="ISC",
     py_modules=["black_nb"],
-    entry_points={
-        "console_scripts" : [
-            "black-nb=black_nb:main"
-        ]
-    },
+    entry_points={"console_scripts": ["black-nb=black_nb:main"]},
     install_requires=["nbformat", "black", "dataclasses"],
 )

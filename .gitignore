@@ -3,3 +3,5 @@
 /dist/
 /black_nb.egg-info/
 __pycache__/
+.idea/
+.python-version
