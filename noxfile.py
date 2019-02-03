@@ -11,28 +11,28 @@ def install_dependencies(session):
     session.run("poetry", "install")
 
 
-@nox.session
+@nox.session(python='3.7')
 def mypy(session):
     """Type check code with mypy."""
     install_dependencies(session)
     session.run("poetry", "run", "mypy", "--strict", "src")
 
 
-@nox.session
+@nox.session(python='3.7')
 def flake8(session):
     """Lint code with Flake8."""
     install_dependencies(session)
     session.run("poetry", "run", "flake8", *SOURCES)
 
 
-@nox.session
+@nox.session(python='3.7')
 def pylint(session):
     """Lint code with Pylint."""
     install_dependencies(session)
     session.run("poetry", "run", "pylint", *SOURCES)
 
 
-@nox.session
+@nox.session(python='3.7')
 def isort(session):
     """Check import ordering with isort."""
     install_dependencies(session)
@@ -41,7 +41,7 @@ def isort(session):
     )
 
 
-@nox.session
+@nox.session(python='3.7')
 def black(session):
     """Check code formatting with black."""
     install_dependencies(session)
