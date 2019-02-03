@@ -25,5 +25,5 @@ comment:
   behavior: default
   require_changes: no
   
-#ignore:
-#  - "tests/*"       # wildcards accepted
+ignore:
+  - "tests/*"       # wildcards accepted
