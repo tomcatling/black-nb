@@ -14,9 +14,6 @@ jobs:
       - run:
           name: Tests
           command: sudo tox
-      - run:
-          name: CoverageUpload
-          command: codecov --token=$codecov
 workflows:
   version: 2
   build_and_test:
