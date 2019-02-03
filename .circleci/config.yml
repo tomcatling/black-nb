@@ -10,7 +10,7 @@ jobs:
           command: pip install --user nox
       - run:
           name: Formatting
-          command: nox
+          command: /home/circleci/.local/bin/nox
 workflows:
   version: 2
   build_and_test:
