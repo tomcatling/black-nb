@@ -7,13 +7,13 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: sudo pip install tox codecov pytest pytest-cov
+          command: sudo pip install nox codecov pytest pytest-cov
       - run:
           name: Installation
           command: sudo python setup.py install
       - run:
           name: Tests
-          command: sudo tox
+          command: sudo nox
 workflows:
   version: 2
   build_and_test:
