@@ -24,5 +24,5 @@ setup(
     license="ISC",
     py_modules=["black_nb"],
     entry_points={"console_scripts": ["black-nb=black_nb:main"]},
-    install_requires=["nbformat", "black", "dataclasses"],
+    install_requires=["nbformat", "black"],
 )
