@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: sudo pip install nox codecov pytest pytest-cov
+          command: sudo pip install nox codecov pytest pytest-cov flake8 pylint isort
       - run:
           name: Installation
           command: sudo python setup.py install
