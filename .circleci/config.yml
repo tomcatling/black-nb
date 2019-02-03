@@ -1,5 +1,16 @@
 version: 2
 jobs:
+  formatting:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - run:
+          name: Pip dependencies
+          command: sudo pip install nox codecov pytest pytest-cov flake8 pylint isort jsonschema
+      - run:
+          name: Formatting
+          command: sudo nox
   test:
     docker:
       - image: circleci/python
@@ -7,15 +18,16 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: sudo pip install nox codecov pytest pytest-cov flake8 pylint isort
+          command: sudo pip install codecov pytest pytest-cov
       - run:
           name: Installation
           command: sudo python setup.py install
       - run:
           name: Tests
-          command: sudo nox
+          command: pytest --cov=./ && codecov --token=$CODECOV_TOKEN
 workflows:
   version: 2
   build_and_test:
     jobs:
       - test
+      - formatting

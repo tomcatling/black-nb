@@ -1,11 +1,11 @@
-from dataclasses import dataclass
-from pathlib import Path
 import re
-from typing import Set, Tuple, Dict, List, Optional
+from pathlib import Path
+from typing import Dict, List, Optional, Set, Tuple
 
 import black
 import click
 import nbformat
+from dataclasses import dataclass
 
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
