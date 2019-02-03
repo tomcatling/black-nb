@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: pip install nox
+          command: pip install --user nox
       - run:
           name: Formatting
           command: nox
