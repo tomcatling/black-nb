@@ -13,7 +13,7 @@ jobs:
           command: sudo python setup.py install
       - run:
           name: Tests
-          command: tox
+          command: sudo tox
       - run:
           name: CoverageUpload
           command: codecov --token=$codecov
