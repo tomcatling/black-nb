@@ -7,16 +7,13 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: sudo pip install black nbformat click codecov coverage
+          command: sudo pip install tox codecov pytest pytest-cov
       - run:
           name: Installation
           command: sudo python setup.py install
       - run:
-          name: Installation
-          command: coverage run tests/example_test.py
-      - run:
-          name: CodeCov
-          command: codecov --token=$codecov
+          name: Tests
+          command: sudo tox
 workflows:
   version: 2
   build_and_test:
