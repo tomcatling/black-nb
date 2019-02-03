@@ -9,7 +9,6 @@ def install_dependencies(session):
     """Install Poetry and project dependencies."""
     session.install("poetry")
     session.run("poetry", "install")
-    session.run("source", "$HOME/.poetry/env")
 
 
 @nox.session
