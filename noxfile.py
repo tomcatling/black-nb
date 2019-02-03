@@ -2,7 +2,7 @@
 
 import nox
 
-SOURCES = ["noxfile.py", "black_nb.py"]
+SOURCES = ["noxfile.py", "src"]
 
 
 def install_dependencies(session):
