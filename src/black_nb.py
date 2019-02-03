@@ -222,8 +222,7 @@ def format_file_in_place(
     with src.open() as fp:
         src_contents = nbformat.read(fp, as_version=nbformat.NO_CONVERT)
 
-    dst_cells = List[Dict]
-    dst_cells = []
+    dst_cells: List[Dict[Any]] = []
     for cell in src_contents["cells"]:
         if cell["cell_type"] == "code":
             try:
