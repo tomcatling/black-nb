@@ -24,13 +24,13 @@ def flake8(session):
     install_dependencies(session)
     session.run("poetry", "run", "flake8", *SOURCES)
 
+
 @nox.session(python="3.7")
 def coverage(session):
     """Test coverage."""
     install_dependencies(session)
     session.run("poetry", "run", "pytest", "--cov", "./")
     session.run("poetry", "run", "codecov")
-
 
 
 @nox.session(python="3.7")
