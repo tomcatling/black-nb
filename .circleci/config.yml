@@ -7,10 +7,10 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: sudo pip install nox
+          command: pip install nox
       - run:
           name: Formatting
-          command: sudo nox
+          command: nox
 workflows:
   version: 2
   build_and_test:
