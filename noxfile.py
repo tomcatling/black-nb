@@ -11,11 +11,11 @@ def install_dependencies(session):
     session.run("poetry", "install")
 
 
-#@nox.session
-#def mypy(session):
-#    """Type check code with mypy."""
-#    install_dependencies(session)
-#    session.run("poetry", "run", "mypy", "--strict", "src")
+@nox.session
+def mypy(session):
+    """Type check code with mypy."""
+    install_dependencies(session)
+    session.run("poetry", "run", "mypy", "--strict", "src")
 
 
 @nox.session
@@ -25,11 +25,11 @@ def flake8(session):
     session.run("poetry", "run", "flake8", *SOURCES)
 
 
-#nox.session
-#ef pylint(session):
-#   """Lint code with Pylint."""
-#   install_dependencies(session)
-#   session.run("poetry", "run", "pylint", *SOURCES)
+@nox.session
+def pylint(session):
+    """Lint code with Pylint."""
+    install_dependencies(session)
+    session.run("poetry", "run", "pylint", *SOURCES)
 
 
 @nox.session
