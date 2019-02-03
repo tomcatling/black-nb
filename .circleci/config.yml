@@ -18,10 +18,10 @@ jobs:
       - checkout
       - run:
           name: Pip dependencies
-          command: sudo pip install codecov pytest pytest-cov
+          command: sudo pip install codecov pytest pytest-cov poetry
       - run:
           name: Installation
-          command: sudo python setup.py install
+          command: sudo poetry install
       - run:
           name: Tests
           command: pytest --cov=./ && codecov --token=$CODECOV_TOKEN
