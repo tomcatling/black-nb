@@ -2,7 +2,7 @@ version: 2
 jobs:
   formatting:
     docker:
-      - image: circleci/python
+      - image: circleci/xenial
     steps:
       - checkout
       - run:
