@@ -20,16 +20,6 @@ def flake8(session):
 
 
 @nox.session()
-def isort(session):
-    """Check import ordering with isort."""
-    session.install("isort==4.3")
-    if session.posargs:
-        session.run("isort", "--recursive", *session.posargs)
-    else:
-        session.run("isort", "--check-only", "--recursive", *SOURCES)
-
-
-@nox.session()
 def black(session):
     """Check code formatting with black."""
     session.install("black==18.9b0")
