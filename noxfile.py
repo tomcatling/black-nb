@@ -43,12 +43,11 @@ def test(session):
     session.run("pytest")
 
 
-# @nox.session()
-# def coverage(session):
-#     """Test coverage."""
-#     session.install("coverage")
-#     session.install("poetry")
-#     session.install("pytest")
-#     session.install("pytest-cov")
-#     session.run("poetry", "install")
-#     session.run("pytest", "--cov", "src", "tests/")
+@nox.session()
+def coverage(session):
+    """Test coverage."""
+    session.install("coverage")
+    session.install("pytest")
+    session.install("pytest-cov")
+    session.run("pip", "install", ".")
+    session.run("pytest", "--cov", "black_nb", "tests/")
