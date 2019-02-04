@@ -140,7 +140,7 @@ def cli(
         black.err(f"Invalid regular expression for exclude given: {exclude!r}")
         ctx.exit(2)
 
-    report = black.Report(check=check, quiet=False, verbose=False)
+    report = black.Report(check=check, quiet=False, verbose=True)
     root = black.find_project_root(src)
     sources: Set[Path] = set()
     for s in src:
