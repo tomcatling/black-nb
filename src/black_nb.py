@@ -1,11 +1,13 @@
+"""Apply Black to Jupyter notebooks."""
+
 import re
 from pathlib import Path
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 import black
 import click
 import nbformat
-from dataclasses import dataclass
 
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
