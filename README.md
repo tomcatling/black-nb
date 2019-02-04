@@ -1,7 +1,7 @@
 <h1 align="center">black-nb :notebook: </h2>
 
 <p align="center">
-<a href="https://circleci.com/gh/tomcatling/black-nb"><img alt="Build Status" src="https://circleci.com/gh/tomcatling/black-nb.svg?style=shield"></a>
+<a href="https://travis-ci.com/tomcatling/black-nb"><img alt="Build Status" src="https://travis-ci.com/tomcatling/black-nb.svg?branch=master"></a>
 <a href="https://codecov.io/github/tomcatling/black-nb?branch=master"><img alt="Code Coverage" src="https://codecov.io/github/tomcatling/black-nb/coverage.svg?branch=master"></a>
 <a href="https://github.com/ambv/black"><img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
