@@ -9,7 +9,6 @@ import click
 import nbformat
 from dataclasses import dataclass
 
-
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
 DEFAULT_EXCLUDES = (

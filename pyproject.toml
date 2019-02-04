@@ -29,7 +29,7 @@ Click = "^7.0"
 [tool.poetry.dev-dependencies]
 mypy = "^0.660.0"
 flake8 = "^3.6"
-isort = "^4.3"
+isort = "^4.3.4"
 nox = "^2018.10"
 codecov = "^2.0.10"
 pytest-cov = "^2.6"
