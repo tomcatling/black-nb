@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import List
 
 import black
 from black_nb.cli import DEFAULT_EXCLUDES, DEFAULT_INCLUDES, cli
