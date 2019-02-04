@@ -7,3 +7,5 @@ __pycache__/
 .python-version
 .nox/
 .coverage
+*.DS_Store
+.cache

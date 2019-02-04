@@ -23,7 +23,10 @@ def flake8(session):
 def isort(session):
     """Check import ordering with isort."""
     session.install("isort")
-    session.run("isort", "--check-only", "--recursive", *SOURCES)
+    if session.posargs:
+        session.run("isort", "--recursive", *session.posargs)
+    else:
+        session.run("isort", "--check-only", "--recursive", *SOURCES)
 
 
 @nox.session
