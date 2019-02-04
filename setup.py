@@ -17,7 +17,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/tomcatling/black-nb",
     author="Tom Catling",
-    author_email="tomcatling@gmail.com>",
+    author_email="tomcatling@gmail.com",
     license="ISC",
     classifiers=[
         "Development Status :: 3 - Alpha",
