@@ -1,11 +1,13 @@
-from dataclasses import dataclass
-from pathlib import Path
+"""Apply Black to Jupyter notebooks."""
+
 import re
-from typing import Set, Tuple, Dict, List, Optional
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import black
 import click
 import nbformat
+from dataclasses import dataclass
 
 DEFAULT_LINE_LENGTH = 79
 DEFAULT_INCLUDES = r"\.ipynb$"
@@ -222,7 +224,7 @@ def format_file_in_place(
     with src.open() as fp:
         src_contents = nbformat.read(fp, as_version=nbformat.NO_CONVERT)
 
-    dst_cells: List[Dict] = []
+    dst_cells: List[Dict[Any, Any]] = []
     for cell in src_contents["cells"]:
         if cell["cell_type"] == "code":
             try:
