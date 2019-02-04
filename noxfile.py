@@ -34,15 +34,6 @@ def coverage(session):
 
 
 @nox.session(python="3.7")
-def isort(session):
-    """Check import ordering with isort."""
-    install_dependencies(session)
-    session.run(
-        "poetry", "run", "isort", "--check-only", "--recursive", *SOURCES
-    )
-
-
-@nox.session(python="3.7")
 def black(session):
     """Check code formatting with black."""
     install_dependencies(session)
