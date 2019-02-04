@@ -39,7 +39,7 @@ def black(session):
         session.run("black", "--check", *SOURCES)
 
 
-@nox.session()
+@nox.session(python=["3.6", "3.7"])
 def test(session):
     """Test and report coverage."""
     session.install("coverage")
