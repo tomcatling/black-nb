@@ -19,17 +19,7 @@ def flake8(session):
     session.run("flake8", *SOURCES)
 
 
-@nox.session
-def isort(session):
-    """Check import ordering with isort."""
-    session.install("isort")
-    if session.posargs:
-        session.run("isort", "--recursive", *session.posargs)
-    else:
-        session.run("isort", "--check-only", "--recursive", *SOURCES)
-
-
-@nox.session
+@nox.session()
 def black(session):
     """Check code formatting with black."""
     session.install("black==18.9b0")
@@ -39,16 +29,9 @@ def black(session):
         session.run("black", "--check", *SOURCES)
 
 
-@nox.session
-def test(session):
-    session.install("pytest")
-    session.run("pip", "install", ".")
-    session.run("pytest")
-
-
 @nox.session()
-def coverage(session):
-    """Test coverage."""
+def test(session):
+    """Test and report coverage."""
     session.install("coverage")
     session.install("pytest")
     session.install("pytest-cov")

@@ -25,14 +25,15 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: ISC License (ISCL)",
         "Natural Language :: English",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
     packages=find_packages(),
     use_scm_version={"version_scheme": "post-release"},
     setup_requires=["setuptools_scm"],
-    python_requires='>3.7',
+    python_requires='>3.6',
     install_requires=[
-        "black==18.9b0", "click", "nbformat"
+        "attrs", "black==18.9b0", "click", "nbformat"
     ],
     entry_points={"console_scripts": ["black-nb=black_nb.cli:cli"]},
 )
