@@ -5,4 +5,4 @@
 __pycache__/
 .idea/
 .python-version
-.tox/
+.nox/
