@@ -49,5 +49,7 @@ def coverage(session):
     session.install("coverage")
     session.install("pytest")
     session.install("pytest-cov")
+    session.install("codecov")
     session.run("pip", "install", ".")
     session.run("pytest", "--cov", "black_nb", "tests/")
+    session.run("codecov")
