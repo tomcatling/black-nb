@@ -1,11 +1,13 @@
-from black_nb.cli import cli, DEFAULT_INCLUDES, DEFAULT_EXCLUDES
-from click.testing import CliRunner
-from pathlib import Path
 import re
+from pathlib import Path
+
 import black
+from black_nb.cli import DEFAULT_EXCLUDES, DEFAULT_INCLUDES, cli
+from click.testing import CliRunner
 
 THIS_FILE = Path(__file__)
 THIS_DIR = THIS_FILE.parent
+
 
 def test_basic():
     runner = CliRunner()
@@ -14,19 +16,18 @@ def test_basic():
 
 
 def test_include_exclude() -> None:
-        path = THIS_DIR / "data" / "include_exclude_tests"
-        include = re.compile(r"\.ipynb$")
-        exclude = re.compile(r"/exclude/|/\.definitely_exclude/")
-        report = black.Report()
-        sources: List[Path] = []
-        expected = [
-            Path(path / "b/dont_exclude/a.ipynb"),
-        ]
-        this_abs = THIS_DIR.resolve()
-        sources.extend(
-            black.gen_python_files_in_dir(path, this_abs, include, exclude, report)
-        )
-        assert sorted(expected) == sorted(sources)
+    path = THIS_DIR / "data" / "include_exclude_tests"
+    include = re.compile(r"\.ipynb$")
+    exclude = re.compile(r"/exclude/|/\.definitely_exclude/")
+    report = black.Report()
+    sources: List[Path] = []
+    expected = [Path(path / "b/dont_exclude/a.ipynb")]
+    this_abs = THIS_DIR.resolve()
+    sources.extend(
+        black.gen_python_files_in_dir(path, this_abs, include, exclude, report)
+    )
+    assert sorted(expected) == sorted(sources)
+
 
 def test_empty_include() -> None:
     path = THIS_DIR / "data" / "include_exclude_tests"
@@ -50,8 +51,9 @@ def test_empty_include() -> None:
             path, this_abs, empty, re.compile(DEFAULT_EXCLUDES), report
         )
     )
-    print(set(sources)-set(expected))
+    print(set(sources) - set(expected))
     assert sorted(expected) == sorted(sources)
+
 
 def test_empty_exclude() -> None:
     path = THIS_DIR / "data" / "include_exclude_tests"
@@ -70,6 +72,7 @@ def test_empty_exclude() -> None:
         )
     )
     assert sorted(expected) == sorted(sources)
+
 
 def test_invalid_include_exclude() -> None:
     for option in ["--include", "--exclude"]:
