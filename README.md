@@ -1,9 +1,6 @@
-
 ![black-nb logo](https://s3.eu-west-2.amazonaws.com/tomcatling-public/black-nb.png)
 
-
-
-<h1 align="center">black-nb :notebook: </h2>
+<h1 align="center">The uncompromising code formatter, for Jupyter notebooks</h2>
 
 <p align="center">
 <a href="https://travis-ci.com/tomcatling/black-nb"><img alt="Build Status" src="https://travis-ci.com/tomcatling/black-nb.svg?branch=master"></a>
