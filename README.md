@@ -1,4 +1,4 @@
-![black-nb logo](https://s3.eu-west-2.amazonaws.com/tomcatling-public/black-nb.png)
+![black-nb logo](https://s3.eu-west-2.amazonaws.com/tomcatling-public/black-nb-compact.png)
 
 <h1 align="center">The uncompromising code formatter, for Jupyter notebooks</h2>
 
