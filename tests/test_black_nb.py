@@ -52,7 +52,6 @@ def test_empty_include() -> None:
             path, this_abs, empty, re.compile(DEFAULT_EXCLUDES), report
         )
     )
-    print(set(sources) - set(expected))
     assert sorted(expected) == sorted(sources)
 
 
@@ -77,5 +76,5 @@ def test_empty_exclude() -> None:
 
 def test_invalid_include_exclude() -> None:
     for option in ["--include", "--exclude"]:
-        result = CliRunner().invoke(black.main, ["-", option, "**()(!!*)"])
+        result = CliRunner().invoke(cli, ["-", option, "**()(!!*)"])
         assert result.exit_code == 2
