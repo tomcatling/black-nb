@@ -13,19 +13,41 @@ THIS_DIR = THIS_FILE.parent
 def test_formatting():
     path = THIS_DIR / "data" / "formatting_tests"
     runner = CliRunner()
-    exit_code = runner.invoke(cli, [path.resolve()]).exit_code
-    exit_code |= runner.invoke(cli, ["--check", path.resolve()]).exit_code
-    assert exit_code == 0
+
+    unformatted = runner.invoke(
+        cli, ["--check", path.resolve()]
+    )
+    assert unformatted.exit_code == 1
+
+    formatting = runner.invoke(
+        cli, [path.resolve()]
+    )
+    assert formatting.exit_code == 0
+
+    formatted = runner.invoke(
+        cli, ["--check", path.resolve()]
+    )
+    assert formatted.exit_code == 0
 
 
 def test_clear_output():
     path = THIS_DIR / "data" / "clear_output_tests"
     runner = CliRunner()
-    exit_code = runner.invoke(
-        cli, ["--clear-output", path.resolve()]
-    ).exit_code
-    exit_code |= runner.invoke(cli, ["--check", path.resolve()]).exit_code
-    assert exit_code == 0
+
+    uncleared = runner.invoke(
+        cli, ["--check", "--clear-output", path.resolve()]
+    )
+    assert uncleared.exit_code == 1
+
+    clearing = runner.invoke(
+        cli, [path.resolve()]
+    )
+    assert clearing.exit_code == 0
+
+    cleared = runner.invoke(
+        cli, ["--check", "--clear-output", path.resolve()]
+    )
+    assert cleared.exit_code == 0
 
 
 def test_include_exclude():
