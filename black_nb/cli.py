@@ -75,6 +75,24 @@ DEFAULT_EXCLUDES = (
     show_default=True,
 )
 @click.option(
+    "-q",
+    "--quiet",
+    is_flag=True,
+    help=(
+        "Don't emit non-error messages to stderr. Errors are still emitted, "
+        "silence those with 2>/dev/null."
+    ),
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help=(
+        "Also emit messages to stderr about files that were not changed or "
+        "were ignored due to --exclude=."
+    ),
+)
+@click.option(
     "--clear-output",
     is_flag=True,
     help="Clear cell output as part of formatting.",
@@ -111,6 +129,8 @@ def cli(
     check: bool,
     include: str,
     exclude: str,
+    quiet: bool,
+    verbose: bool,
     clear_output: bool,
     src: Tuple[str],
     config: Optional[str],
@@ -126,7 +146,7 @@ def cli(
         skip_numeric_underscore_normalization=False,
     )
 
-    if config:
+    if config and verbose:
         black.out(f"Using configuration from {config}.", bold=False, fg="blue")
 
     try:
@@ -140,7 +160,7 @@ def cli(
         black.err(f"Invalid regular expression for exclude given: {exclude!r}")
         ctx.exit(2)
 
-    report = black.Report(check=check, quiet=False, verbose=True)
+    report = black.Report(check=check, quiet=quiet, verbose=verbose)
     root = black.find_project_root(src)
     sources: Set[Path] = set()
     for s in src:
@@ -157,7 +177,8 @@ def cli(
         else:
             black.err(f"invalid path: {s}")
     if len(sources) == 0:
-        black.out("No paths given. Nothing to do.")
+        if verbose or not quiet:
+            black.out("No paths given. Nothing to do.")
         ctx.exit(0)
 
     for source in sources:
@@ -168,10 +189,13 @@ def cli(
             mode=mode,
             clear_output=clear_output,
             report=report,
+            quiet=quiet,
+            verbose=verbose,
         )
 
-    black.out(f"All done!")
-    click.secho(str(report), err=True)
+    if verbose or not quiet:
+        black.out(f"All done!")
+        click.secho(str(report), err=True)
     ctx.exit(report.return_code)
 
 
@@ -182,6 +206,8 @@ def reformat_one(
     mode: black.FileMode,
     clear_output: bool,
     report: black.Report,
+    quiet: bool,
+    verbose: bool,
 ) -> None:
     """Reformat a single file under `src`."""
     try:
@@ -216,7 +242,7 @@ def reformat_one(
         ):
             black.write_cache(cache, [src], line_length, mode)
         report.done(src, changed)
-        if changed is not black.Changed.CACHED:
+        if changed is not black.Changed.CACHED and (verbose or not quiet):
             click.secho(f"    {sub_report}", err=True)
     except Exception as exc:
         report.failed(src, str(exc))
