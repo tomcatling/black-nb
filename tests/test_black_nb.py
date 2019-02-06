@@ -21,7 +21,9 @@ def test_formatting():
 def test_clear_output():
     path = THIS_DIR / "data" / "clear_output_tests"
     runner = CliRunner()
-    exit_code = runner.invoke(cli, ["--clear-output", path.resolve()]).exit_code
+    exit_code = runner.invoke(
+        cli, ["--clear-output", path.resolve()]
+    ).exit_code
     exit_code |= runner.invoke(cli, ["--check", path.resolve()]).exit_code
     assert exit_code == 0
 
