@@ -310,7 +310,8 @@ def clear_cell_outputs(
 def format_cell_source(
     src_contents: str, *, line_length: int, mode: black.FileMode
 ) -> black.FileContent:
-    """Reformat contents of cell and return new contents.
+    """
+    Reformat contents of cell and return new contents.
     Additionally confirm that the reformatted code is valid by calling
     :func:`assert_equivalent` and :func:`assert_stable` on it.
     `line_length` is passed to :func:`format_str`.
