@@ -37,7 +37,7 @@ To check if notebooks pass *black* and additionally have no output (files will b
 black-nb --clear-output --check .
 ```
 
-To reformat all default includes (`*.ipynb`) below `./` excluding paths matching `*/outputs/*` or `*/.ipynb_checkpoints/*` :
+To reformat all `*.ipynb` files below `./`, excluding paths matching `*/outputs/*` or `*/.ipynb_checkpoints/*`:
 
 ```bash
 black-nb --exclude /(outputs|\.ipynb_checkpoints)/ .
