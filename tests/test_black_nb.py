@@ -12,41 +12,31 @@ THIS_DIR = THIS_FILE.parent
 
 def test_formatting():
     path = THIS_DIR / "data" / "formatting_tests"
-    runner = CliRunner()
+    abs_path = str(path.resolve())
 
-    unformatted = runner.invoke(
-        cli, ["--check", path.resolve()]
-    )
+    unformatted = CliRunner().invoke(cli, ["--check", abs_path])
     assert unformatted.exit_code == 1
 
-    formatting = runner.invoke(
-        cli, [path.resolve()]
-    )
+    formatting = CliRunner().invoke(cli, [abs_path])
     assert formatting.exit_code == 0
 
-    formatted = runner.invoke(
-        cli, ["--check", path.resolve()]
-    )
+    formatted = CliRunner().invoke(cli, ["--check", abs_path])
     assert formatted.exit_code == 0
 
 
 def test_clear_output():
     path = THIS_DIR / "data" / "clear_output_tests"
-    runner = CliRunner()
+    abs_path = str(path.resolve())
 
-    uncleared = runner.invoke(
-        cli, ["--check", "--clear-output", path.resolve()]
+    uncleared = CliRunner().invoke(
+        cli, ["--check", "--clear-output", abs_path]
     )
     assert uncleared.exit_code == 1
 
-    clearing = runner.invoke(
-        cli, [path.resolve()]
-    )
+    clearing = CliRunner().invoke(cli, ["--clear-output", abs_path])
     assert clearing.exit_code == 0
 
-    cleared = runner.invoke(
-        cli, ["--check", "--clear-output", path.resolve()]
-    )
+    cleared = CliRunner().invoke(cli, ["--check", "--clear-output", abs_path])
     assert cleared.exit_code == 0
 
 
@@ -103,5 +93,5 @@ def test_empty_exclude():
 
 @pytest.mark.parametrize("option", ["--include", "--exclude"])
 def test_invalid_include_exclude(option):
-    result = CliRunner().invoke(cli, ["-", option, "**()(!!*)"])
+    result = CliRunner().invoke(cli, [option, "**()(!!*)"])
     assert result.exit_code == 2
