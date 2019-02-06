@@ -1,6 +1,5 @@
 import re
 from pathlib import Path
-from typing import List
 
 import black
 from black_nb.cli import DEFAULT_EXCLUDES, DEFAULT_INCLUDES, cli
@@ -68,7 +67,7 @@ def test_empty_exclude():
     assert sorted(expected) == sorted(sources)
 
 
-def test_invalid_include_exclude():
-    for option in ["--include", "--exclude"]:
-        result = CliRunner().invoke(cli, ["-", option, "**()(!!*)"])
-        assert result.exit_code == 2
+@pytest.mark.parametrize("option", ["--include", "--exclude"])
+def test_invalid_include_exclude(option):
+    result = CliRunner().invoke(cli, ["-", option, "**()(!!*)"])
+    assert result.exit_code == 2
