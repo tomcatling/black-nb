@@ -80,4 +80,4 @@ Copyright © 2019 Tom Catling, Liam Coatman.
 
 `black-nb` is distributed under the terms of the [MIT licence].
 
-[isc licence]: https://opensource.org/licenses/ISC
+[mit licence]: https://opensource.org/licenses/MIT
