@@ -13,17 +13,17 @@ THIS_DIR = THIS_FILE.parent
 def test_formatting():
     path = THIS_DIR / "data" / "formatting_tests"
     runner = CliRunner()
-    result = runner.invoke(cli, [path.resolve()])
-    result |= runner.invoke(cli, ["--check", path.resolve()])
-    assert result.exit_code == 0
+    exit_code = runner.invoke(cli, [path.resolve()]).exit_code
+    exit_code |= runner.invoke(cli, ["--check", path.resolve()]).exit_code
+    assert exit_code == 0
 
 
 def test_clear_output():
     path = THIS_DIR / "data" / "clear_output_tests"
     runner = CliRunner()
-    result = runner.invoke(cli, ["--clear-output", path.resolve()])
-    result |= runner.invoke(cli, ["--check", path.resolve()])
-    assert result.exit_code == 0
+    exit_code = runner.invoke(cli, ["--clear-output", path.resolve()]).exit_code
+    exit_code |= runner.invoke(cli, ["--check", path.resolve()]).exit_code
+    assert exit_code == 0
 
 
 def test_include_exclude():
