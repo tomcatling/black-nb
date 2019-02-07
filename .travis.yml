@@ -1,9 +1,16 @@
 dist: xenial
 language: python
-python:
-  - "3.7"
-  - "3.6"
+matrix:
+  include: 
+  - python: 3.7
+    env: NOX_SESSION="mypy flake8 black"
+  - python: 3.7
+    env: NOX_SESSION="tests-3.7"
+  - python: 3.6
+    env: NOX_SESSION="tests-3.6"
+  - python: 3.7
+    env: NOX_SESSION="cov"
 install:
   - pip install nox
 script:
-  - nox
+  - nox -s $NOX_SESSION
