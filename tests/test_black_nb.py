@@ -1,42 +1,48 @@
 import re
+import shutil
 from pathlib import Path
 
 import black
-from black_nb.cli import DEFAULT_EXCLUDES, DEFAULT_INCLUDES, cli
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
+
+from black_nb.cli import DEFAULT_EXCLUDES, DEFAULT_INCLUDES, cli
 
 THIS_FILE = Path(__file__)
 THIS_DIR = THIS_FILE.parent
 
 
-def test_formatting():
-    path = THIS_DIR / "data" / "formatting_tests"
-    abs_path = str(path.resolve())
+def test_formatting(tmp_path):
+    src_dir = THIS_DIR / "data" / "formatting_tests"
+    dst_dir = tmp_path / "formatting_tests"
+    shutil.copytree(src_dir, dst_dir)
 
-    unformatted = CliRunner().invoke(cli, ["--check", abs_path])
+    unformatted = CliRunner().invoke(cli, ["--check", str(dst_dir)])
     assert unformatted.exit_code == 1
 
-    formatting = CliRunner().invoke(cli, [abs_path])
+    formatting = CliRunner().invoke(cli, [str(dst_dir)])
     assert formatting.exit_code == 0
 
-    formatted = CliRunner().invoke(cli, ["--check", abs_path])
+    formatted = CliRunner().invoke(cli, ["--check", str(dst_dir)])
     assert formatted.exit_code == 0
 
 
-def test_clear_output():
-    path = THIS_DIR / "data" / "clear_output_tests"
-    abs_path = str(path.resolve())
+def test_clear_output(tmp_path):
+    src_dir = THIS_DIR / "data" / "clear_output_tests"
+    dst_dir = tmp_path / "clear_output_tests"
+    shutil.copytree(src_dir, dst_dir)
 
     uncleared = CliRunner().invoke(
-        cli, ["--check", "--clear-output", abs_path]
+        cli, ["--check", "--clear-output", str(dst_dir)]
     )
     assert uncleared.exit_code == 1
 
-    clearing = CliRunner().invoke(cli, ["--clear-output", abs_path])
+    clearing = CliRunner().invoke(cli, ["--clear-output", str(dst_dir)])
     assert clearing.exit_code == 0
 
-    cleared = CliRunner().invoke(cli, ["--check", "--clear-output", abs_path])
+    cleared = CliRunner().invoke(
+        cli, ["--check", "--clear-output", str(dst_dir)]
+    )
     assert cleared.exit_code == 0
 
 
