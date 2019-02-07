@@ -46,6 +46,14 @@ def test_clear_output(tmp_path):
     assert cleared.exit_code == 0
 
 
+def test_invalid_input(tmp_path):
+    src_dir = THIS_DIR / "data" / "invalid_input_tests"
+    dst_dir = tmp_path / "invalid_input_tests"
+    shutil.copytree(src_dir, dst_dir)
+
+    assert CliRunner().invoke(cli, ["--check", str(dst_dir)]).exit_code == 123
+
+
 def test_include_exclude():
     path = THIS_DIR / "data" / "include_exclude_tests"
     include = re.compile(r"\.ipynb$")
