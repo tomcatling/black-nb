@@ -232,7 +232,7 @@ def reformat_one(
                 clear_output=clear_output,
                 sub_report=sub_report,
             )
-            if sub_report.change_count:
+            if sub_report.change_count or sub_report.output_change_count:
                 changed = black.Changed.YES
         if (
             write_back is black.WriteBack.YES
@@ -260,7 +260,6 @@ def format_file_in_place(
     Format file under `src` path. Return True if changed.
     If `write_back` is YES, write reformatted code to the file.
     """
-
     with src.open() as fp:
         src_contents = nbformat.read(fp, as_version=nbformat.NO_CONVERT)
 
@@ -465,12 +464,13 @@ class SubReport:
             s = "s" if self.change_count > 1 else ""
             report.append(
                 click.style(
-                    f"{self.change_count} output{s} {cleared}", bold=True
+                    f"{self.output_change_count} output{s} {cleared}",
+                    bold=True,
                 )
             )
         if self.output_same_count:
             s = "s" if self.same_count > 1 else ""
-            report.append(f"{self.same_count} output{s} {unchanged}")
+            report.append(f"{self.output_same_count} output{s} {unchanged}")
         return ", ".join(report) + "."
 
 
