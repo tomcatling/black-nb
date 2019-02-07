@@ -287,9 +287,6 @@ def format_file_in_place(
         dst_cells.append(cell)
     src_contents["cells"] = dst_cells
 
-    # click.echo(src)
-    # click.secho(f"    {sub_report}", err=True)
-
     if write_back is black.WriteBack.YES:
         with src.open("w") as fp:
             nbformat.write(src_contents, fp)
