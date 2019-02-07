@@ -464,7 +464,8 @@ class SubReport:
             s = "s" if self.change_count > 1 else ""
             report.append(
                 click.style(
-                    f"{self.output_change_count} output{s} {cleared}", bold=True
+                    f"{self.output_change_count} output{s} {cleared}",
+                    bold=True,
                 )
             )
         if self.output_same_count:
