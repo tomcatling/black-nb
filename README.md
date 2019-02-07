@@ -40,7 +40,7 @@ black-nb --clear-output --check .
 To reformat all `*.ipynb` files below `./`, excluding paths matching `*/outputs/*` or `*/.ipynb_checkpoints/*`:
 
 ```bash
-black-nb --exclude /(outputs|\.ipynb_checkpoints)/ .
+black-nb --exclude '/(outputs|\.ipynb_checkpoints)/' .
 ```
 
 ## Command Line Options
