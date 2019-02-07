@@ -29,13 +29,18 @@ def black(session):
         session.run("black", "--check", *SOURCES)
 
 
-@nox.session()
-def test(session):
-    """Test and report coverage."""
-    session.install("coverage")
+@nox.session(python=["3.6", "3.7"])
+def tests(session):
+    """Test"""
     session.install("pytest")
-    session.install("pytest-cov")
-    session.install("codecov")
-    session.run("pip", "install", ".")
+    session.install("-e", ".")
+    session.run("pytest", "black_nb", "tests/")
+
+
+@nox.session()
+def cov(session):
+    """Report test coverage."""
+    session.install("coverage", "pytest", "pytest-cov", "codecov")
+    session.install("-e", ".")
     session.run("pytest", "--cov", "black_nb", "tests/")
     session.run("codecov")
