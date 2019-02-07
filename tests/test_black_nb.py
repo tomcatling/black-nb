@@ -51,7 +51,7 @@ def test_invalid_input(tmp_path):
     dst_dir = tmp_path / "invalid_input_tests"
     shutil.copytree(src_dir, dst_dir)
 
-    assert CliRunner().invoke(cli, ["--check", str(dst_dir)]).exit_code == 123
+    assert CliRunner().invoke(cli, [str(dst_dir)]).exit_code == 123
 
 
 def test_include_exclude():
