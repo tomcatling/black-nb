@@ -260,8 +260,12 @@ def format_file_in_place(
     Format file under `src` path. Return True if changed.
     If `write_back` is YES, write reformatted code to the file.
     """
-    with src.open() as fp:
-        src_contents = nbformat.read(fp, as_version=nbformat.NO_CONVERT)
+    try:
+        src_contents = nbformat.read(str(src), as_version=nbformat.NO_CONVERT)
+    except nbformat.reader.NotJSONError:
+        raise black.InvalidInput("Not JSON")
+    except AttributeError:
+        raise black.InvalidInput("No cells")
 
     dst_cells: List[Dict[Any, Any]] = []
     for cell in src_contents["cells"]:
@@ -287,9 +291,6 @@ def format_file_in_place(
                     sub_report.done_output(black.Changed.NO)
         dst_cells.append(cell)
     src_contents["cells"] = dst_cells
-
-    # click.echo(src)
-    # click.secho(f"    {sub_report}", err=True)
 
     if write_back is black.WriteBack.YES:
         with src.open("w") as fp:
