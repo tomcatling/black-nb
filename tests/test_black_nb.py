@@ -1,12 +1,10 @@
-import re
 import shutil
 from pathlib import Path
 
-import black
 import pytest
 from click.testing import CliRunner
 
-from black_nb.cli import DEFAULT_EXCLUDES, DEFAULT_INCLUDES, cli
+from black_nb.cli import cli
 
 THIS_FILE = Path(__file__)
 THIS_DIR = THIS_FILE.parent
