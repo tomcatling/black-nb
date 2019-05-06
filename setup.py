@@ -18,7 +18,7 @@ setup(
     url="https://github.com/tomcatling/black-nb",
     author="Tom Catling",
     author_email="tomcatling@gmail.com",
-    license="ISC",
+    license="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Operating System :: Unix",
