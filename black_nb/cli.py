@@ -93,6 +93,7 @@ DEFAULT_EXCLUDES = (
     ),
 )
 @click.option(
+    "-o",
     "--clear-output",
     is_flag=True,
     help="Clear cell output as part of formatting.",
