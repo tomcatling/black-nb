@@ -14,7 +14,7 @@
 # all copies or substantial portions of the Software.
 
 
-import re
+import regex as re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -140,11 +140,11 @@ def cli(
     The uncompromising code formatter, for Jupyter notebooks.
     """
     write_back = black.WriteBack.from_configuration(check=check, diff=False)
-    mode = black.FileMode.from_configuration(
-        py36=True,
-        pyi=False,
-        skip_string_normalization=False,
-        skip_numeric_underscore_normalization=False,
+    mode = black.FileMode(
+        target_versions=set([black.TargetVersion.PY36]),
+        line_length=line_length,
+        is_pyi=False,
+        string_normalization=True,
     )
 
     if config and verbose:
@@ -169,7 +169,12 @@ def cli(
         if p.is_dir():
             sources.update(
                 black.gen_python_files_in_dir(
-                    p, root, include_regex, exclude_regex, report
+                    p,
+                    root,
+                    include_regex,
+                    exclude_regex,
+                    report,
+                    black.get_gitignore(root),
                 )
             )
         elif p.is_file() or s == "-":
@@ -185,7 +190,6 @@ def cli(
     for source in sources:
         reformat_one(
             src=source,
-            line_length=line_length,
             write_back=write_back,
             mode=mode,
             clear_output=clear_output,
@@ -202,7 +206,6 @@ def cli(
 
 def reformat_one(
     src: Path,
-    line_length: int,
     write_back: black.WriteBack,
     mode: black.FileMode,
     clear_output: bool,
@@ -218,7 +221,7 @@ def reformat_one(
 
         cache: black.Cache = {}
         if write_back is not black.WriteBack.DIFF:
-            cache = black.read_cache(line_length, mode)
+            cache = black.read_cache(mode)
             res_src = src.resolve()
             if res_src in cache and cache[res_src] == black.get_cache_info(
                 res_src
@@ -227,7 +230,6 @@ def reformat_one(
         if changed is not black.Changed.CACHED:
             sub_report = format_file_in_place(
                 src,
-                line_length=line_length,
                 write_back=write_back,
                 mode=mode,
                 clear_output=clear_output,
@@ -241,7 +243,7 @@ def reformat_one(
         ) or (
             write_back is black.WriteBack.CHECK and changed is black.Changed.NO
         ):
-            black.write_cache(cache, [src], line_length, mode)
+            black.write_cache(cache, [src], mode)
         report.done(src, changed)
         if changed is not black.Changed.CACHED and (verbose or not quiet):
             click.secho(f"    {sub_report}", err=True)
@@ -251,7 +253,6 @@ def reformat_one(
 
 def format_file_in_place(
     src: Path,
-    line_length: int,
     write_back: black.WriteBack,
     mode: black.FileMode,
     clear_output: bool,
@@ -272,9 +273,7 @@ def format_file_in_place(
     for cell in src_contents["cells"]:
         if cell["cell_type"] == "code":
             try:
-                cell["source"] = format_cell_source(
-                    cell["source"], line_length=line_length, mode=mode
-                )
+                cell["source"] = format_cell_source(cell["source"], mode=mode)
                 sub_report.done(black.Changed.YES)
             except black.NothingChanged:
                 sub_report.done(black.Changed.NO)
@@ -282,9 +281,10 @@ def format_file_in_place(
                 sub_report.failed()
             if clear_output:
                 try:
-                    cell["outputs"], cell[
-                        "execution_count"
-                    ] = clear_cell_outputs(
+                    (
+                        cell["outputs"],
+                        cell["execution_count"],
+                    ) = clear_cell_outputs(
                         cell["outputs"], cell["execution_count"]
                     )
                     sub_report.done_output(black.Changed.YES)
@@ -309,40 +309,34 @@ def clear_cell_outputs(
 
 
 def format_cell_source(
-    src_contents: str, *, line_length: int, mode: black.FileMode
+    src_contents: str, *, mode: black.FileMode
 ) -> black.FileContent:
     """
     Reformat contents of cell and return new contents.
     Additionally confirm that the reformatted code is valid by calling
     :func:`assert_equivalent` and :func:`assert_stable` on it.
-    `line_length` is passed to :func:`format_str`.
     """
 
     if src_contents.strip() == "":
         raise black.NothingChanged
 
-    dst_contents = format_str(src_contents, line_length=line_length, mode=mode)
+    dst_contents = format_str(src_contents, mode=mode)
 
     if src_contents == dst_contents:
         raise black.NothingChanged
 
     assert_equivalent(src_contents, dst_contents)
-    assert_stable(dst_contents, line_length=line_length, mode=mode)
+    assert_stable(dst_contents, mode=mode)
 
     return dst_contents
 
 
 def format_str(
-    src_contents: str,
-    line_length: int,
-    *,
-    mode: black.FileMode = black.FileMode.AUTO_DETECT,
+    src_contents: str, *, mode: black.FileMode = black.FileMode(),
 ) -> black.FileContent:
     trailing_semi_colon = src_contents.rstrip()[-1] == ";"
     src_contents = hide_magic(src_contents)
-    dst_contents = black.format_str(
-        src_contents, line_length=line_length, mode=mode
-    )
+    dst_contents = black.format_str(src_contents, mode=mode)
     dst_contents = dst_contents.rstrip()
     if trailing_semi_colon:
         dst_contents = f"{dst_contents};"
@@ -354,12 +348,8 @@ def assert_equivalent(src: str, dst: str) -> None:
     black.assert_equivalent(hide_magic(src), hide_magic(dst))
 
 
-def assert_stable(
-    dst: str,
-    line_length: int,
-    mode: black.FileMode = black.FileMode.AUTO_DETECT,
-) -> None:
-    new_dst = format_str(dst, line_length=line_length, mode=mode)
+def assert_stable(dst: str, mode: black.FileMode = black.FileMode(),) -> None:
+    new_dst = format_str(dst, mode=mode)
     if dst != new_dst:
         raise AssertionError(
             "INTERNAL ERROR: Black produced different code on the second pass "
