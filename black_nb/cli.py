@@ -141,7 +141,7 @@ def cli(
     """
     write_back = black.WriteBack.from_configuration(check=check, diff=False)
     mode = black.FileMode(
-        target_versions=set([black.TargetVersion.PY36]),
+        target_versions={black.TargetVersion.PY36},
         line_length=line_length,
         is_pyi=False,
         string_normalization=True,
