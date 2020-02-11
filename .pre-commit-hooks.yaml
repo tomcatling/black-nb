@@ -2,6 +2,6 @@
     name: black-nb
     entry: black-nb
     language: python
-    language_version: python3.8
+    language_version: python3
     files: '\.ipynb$'
 
