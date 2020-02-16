@@ -281,9 +281,10 @@ def format_file_in_place(
                 sub_report.failed()
             if clear_output:
                 try:
-                    cell["outputs"], cell[
-                        "execution_count"
-                    ] = clear_cell_outputs(
+                    (
+                        cell["outputs"],
+                        cell["execution_count"],
+                    ) = clear_cell_outputs(
                         cell["outputs"], cell["execution_count"]
                     )
                     sub_report.done_output(black.Changed.YES)
