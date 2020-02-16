@@ -169,7 +169,12 @@ def cli(
         if p.is_dir():
             sources.update(
                 black.gen_python_files_in_dir(
-                    p, root, include_regex, exclude_regex, report
+                    path=p,
+                    root=root,
+                    include=include_regex,
+                    exclude=exclude_regex,
+                    report=report,
+                    gitignore=black.get_gitignore(root),
                 )
             )
         elif p.is_file() or s == "-":
