@@ -373,7 +373,7 @@ def hide_magic(source: str) -> str:
     def _hide_magic_line(line: str) -> str:
         return f"###MAGIC###{line}" if contains_magic(line) else line
 
-    return "\n".join(_hide_magic_line(l) for l in source.split("\n"))
+    return "\n".join(_hide_magic_line(line) for line in source.split("\n"))
 
 
 def reveal_magic(source: str) -> str:
