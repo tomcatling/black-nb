@@ -1,7 +1,6 @@
 import shutil
 from pathlib import Path
 
-import pytest
 from click.testing import CliRunner
 
 from black_nb.cli import cli
@@ -48,11 +47,4 @@ def test_invalid_input(tmp_path):
     src_dir = THIS_DIR / "data" / "invalid_input_tests"
     dst_dir = tmp_path / "invalid_input_tests"
     shutil.copytree(src_dir, dst_dir)
-
     assert CliRunner().invoke(cli, [str(dst_dir)]).exit_code == 123
-
-
-@pytest.mark.parametrize("option", ["--include", "--exclude"])
-def test_invalid_include_exclude(option):
-    result = CliRunner().invoke(cli, [option, "**()(!!*)"])
-    assert result.exit_code == 2
