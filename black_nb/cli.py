@@ -14,7 +14,7 @@
 # all copies or substantial portions of the Software.
 
 
-import re
+import regex as re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
