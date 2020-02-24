@@ -33,7 +33,7 @@ setup(
     setup_requires=["setuptools_scm"],
     python_requires='>3.6',
     install_requires=[
-        "attrs>=18.2.0", "black==18.9b0", "click>=7.0", "nbformat>=4.4.0"
+        "attrs>=18.2.0", "black>=19.10b0", "click>=7.0", "nbformat>=4.4.0"
     ],
     entry_points={"console_scripts": ["black-nb=black_nb.cli:cli"]},
 )
