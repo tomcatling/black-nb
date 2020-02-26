@@ -29,7 +29,7 @@ def black(session):
         session.run("black", "--check", *SOURCES)
 
 
-@nox.session(python=["3.6", "3.7"])
+@nox.session(python=["3.6", "3.7", "3.8"])
 def tests(session):
     """Test"""
     session.install("pytest")
