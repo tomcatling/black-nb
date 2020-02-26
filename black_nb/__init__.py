@@ -1,6 +1,6 @@
 """Apply black to all code cells in a Jupyter notebook."""
 
-# Copyright © 2019 Tom Catling, Liam Coatman
+# Copyright © 2020 Tom Catling, Liam Coatman
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
