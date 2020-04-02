@@ -334,12 +334,22 @@ def format_cell_source(
 def format_str(
     src_contents: str, *, mode: black.FileMode = black.FileMode(),
 ) -> black.FileContent:
+
+    # Strip trailing semicolon because Black removes it, but it is an
+    # important feature in notebooks.
+    # Only a single trailing semicolon is supported. If the cell contains
+    # multiple trailing semicolons black_nb will fail.
     trailing_semi_colon = src_contents.rstrip()[-1] == ";"
+
     src_contents = hide_magic(src_contents)
     dst_contents = black.format_str(src_contents, mode=mode)
     dst_contents = dst_contents.rstrip()
-    if trailing_semi_colon:
+
+    # Replace the missing semi colon, except when Black didn't remove it
+    # which happens if the last line is a comment
+    if trailing_semi_colon and dst_contents.rstrip()[-1] != ";":
         dst_contents = f"{dst_contents};"
+
     dst_contents = reveal_magic(dst_contents)
     return dst_contents
 

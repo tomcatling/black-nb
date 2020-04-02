@@ -21,6 +21,14 @@ def test_formatting(tmp_path):
     formatting = CliRunner().invoke(cli, [str(dst_dir)])
     assert formatting.exit_code == 0
 
+    with open(dst_dir / "unformatted.ipynb") as file:
+        formatted_str = file.read()
+
+        # check correct semicolon in code
+        assert "1 + 1;" in formatted_str
+        # check correct semicolon in comment
+        assert "# cell ending in comment with a semicolon;" in formatted_str
+
     formatted = CliRunner().invoke(cli, ["--check", str(dst_dir)])
     assert formatted.exit_code == 0
 
