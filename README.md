@@ -9,11 +9,10 @@
 <a href="https://pepy.tech/project/black-nb"><img alt="Code Style" src="https://pepy.tech/badge/black-nb"></a>
 </p>
 
-
 *black-nb* applies [*black*](https://github.com/ambv/black) to Jupyter notebooks.
 
 Much of the code is taken from the original *black* project and the behaviour is intentionally similar.
- 
+
 ## Installation
 
 `pip install black-nb`
@@ -85,7 +84,6 @@ Options:
   --config FILE              Read configuration from PATH.
   -h, --help                 Show this message and exit.
 ```
-
 
 ## Copyright
 
