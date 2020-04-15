@@ -1,7 +1,7 @@
 """Apply Black to Jupyter notebooks."""
 
-# Original work Copyright © 2018 Łukasz Langa
-# Modified work Copyright © 2019 Tom Catling, Liam Coatman
+# Original work Copyright © 2018-2020 Łukasz Langa
+# Modified work Copyright © 2019-2020 Tom Catling, Liam Coatman
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
