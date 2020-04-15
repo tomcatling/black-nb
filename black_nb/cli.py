@@ -23,11 +23,10 @@ import click
 import nbformat
 from attr import dataclass
 
-DEFAULT_LINE_LENGTH = 79
+DEFAULT_LINE_LENGTH = black.DEFAULT_LINE_LENGTH
 DEFAULT_INCLUDES = r"\.ipynb$"
 DEFAULT_EXCLUDES = (
-    r"/(\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist|"
-    r"\.ipynb_checkpoints)/"
+    rf"{black.DEFAULT_EXCLUDES.rstrip(')/')}|\.ipynb_checkpoints)/"
 )
 
 
@@ -141,7 +140,7 @@ def cli(
     """
     write_back = black.WriteBack.from_configuration(check=check, diff=False)
     mode = black.FileMode(
-        target_versions={black.TargetVersion.PY36},
+        target_versions=black.PY36_VERSIONS,
         line_length=line_length,
         is_pyi=False,
         string_normalization=True,
