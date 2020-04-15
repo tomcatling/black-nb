@@ -30,7 +30,7 @@ def black(session):
 
 
 @nox.session()
-def tests(session):
+def test(session):
     """Test"""
     session.install("pytest")
     session.install("-e", ".")
