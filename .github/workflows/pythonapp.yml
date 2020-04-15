@@ -16,7 +16,7 @@ jobs:
     - name: Install Nox
       run: pip install nox
     - name: Run Nox
-      run: nox -s mypy flake8 black cov
+      run: nox -s mypy flake8 black
   test:
     runs-on: ubuntu-latest
     strategy:

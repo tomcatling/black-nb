@@ -35,12 +35,3 @@ def test(session):
     session.install("pytest")
     session.install("-e", ".")
     session.run("pytest", "black_nb", "tests/")
-
-
-@nox.session()
-def cov(session):
-    """Report test coverage."""
-    session.install("coverage", "pytest", "pytest-cov", "codecov")
-    session.install("-e", ".")
-    session.run("pytest", "--cov", "black_nb", "tests/")
-    session.run("codecov")
