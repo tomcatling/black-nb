@@ -1,9 +1,7 @@
-![black-nb logo](https://s3.eu-west-2.amazonaws.com/tomcatling-public/black-nb-large.png)
-
 <h1 align="center">The uncompromising code formatter, for Jupyter notebooks</h2>
 
 <p align="center">
-<a href="https://travis-ci.com/tomcatling/black-nb"><img alt="Build Status" src="https://travis-ci.com/tomcatling/black-nb.svg?branch=master"></a>
+<img alt="Build Status" src="https://github.com/tomcatling/black-nb/workflows/Python%20application/badge.svg"></a>
 <a href="https://codecov.io/github/tomcatling/black-nb?branch=master"><img alt="Code Coverage" src="https://codecov.io/github/tomcatling/black-nb/coverage.svg?branch=master"></a>
 <a href="https://github.com/ambv/black"><img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 <a href="https://pepy.tech/project/black-nb"><img alt="Code Style" src="https://pepy.tech/badge/black-nb"></a>
