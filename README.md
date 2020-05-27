@@ -50,7 +50,7 @@ Usage: black-nb [OPTIONS] [SRC]...
 
 Options:
   -l, --line-length INTEGER  How many characters per line to allow.  [default:
-                             79]
+                             88]
   --check                    Don't write the files back, just return the
                              status.  Return code 0 means nothing would
                              change.  Return code 1 means some files would be
