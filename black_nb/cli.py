@@ -262,7 +262,7 @@ def format_file_in_place(
     If `write_back` is YES, write reformatted code to the file.
     """
     try:
-        src_contents = nbformat.read(str(src), as_version=nbformat.NO_CONVERT)
+        src_contents = nbformat.read(str(src), as_version=nbformat.NO_CONVERT,)
     except nbformat.reader.NotJSONError:
         raise black.InvalidInput("Not JSON")
     except AttributeError:
@@ -293,8 +293,7 @@ def format_file_in_place(
     src_contents["cells"] = dst_cells
 
     if write_back is black.WriteBack.YES:
-        with src.open("w") as fp:
-            nbformat.write(src_contents, fp)
+        nbformat.write(src_contents, str(src))
 
     return sub_report
 
