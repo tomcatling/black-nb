@@ -1,6 +1,7 @@
 import shutil
 from pathlib import Path
 
+import nbformat
 import pytest
 from click.testing import CliRunner
 
@@ -64,3 +65,15 @@ def test_invalid_input(tmp_path):
 def test_invalid_include_exclude(option):
     result = CliRunner().invoke(cli, [option, "**()(!!*)"])
     assert result.exit_code == 2
+
+
+def test_encoding_preserved(tmp_path):
+    src_dir = THIS_DIR / "data" / "encoding_tests"
+    dst_dir = tmp_path / "encoding_tests"
+    shutil.copytree(src_dir, dst_dir)
+
+    CliRunner().invoke(cli, [str(dst_dir / "unformatted.ipynb")])
+    # attempt to read formatted file
+    nbformat.read(
+        str(dst_dir / "unformatted.ipynb"), as_version=nbformat.NO_CONVERT
+    )
