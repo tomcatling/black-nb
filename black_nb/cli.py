@@ -14,9 +14,8 @@
 # all copies or substantial portions of the Software.
 
 
-import regex as re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import black
 import click
@@ -132,14 +131,14 @@ def cli(
     quiet: bool,
     verbose: bool,
     clear_output: bool,
-    src: Tuple[str],
+    src: Tuple[str, ...],
     config: Optional[str],
 ) -> None:
     """
     The uncompromising code formatter, for Jupyter notebooks.
     """
     write_back = black.WriteBack.from_configuration(check=check, diff=False)
-    mode = black.FileMode(
+    mode = black.Mode(
         target_versions=black.PY36_VERSIONS,
         line_length=line_length,
         is_pyi=False,
@@ -149,42 +148,26 @@ def cli(
     if config and verbose:
         black.out(f"Using configuration from {config}.", bold=False, fg="blue")
 
-    try:
-        include_regex = black.re_compile_maybe_verbose(include)
-    except re.error:
-        black.err(f"Invalid regular expression for include given: {include!r}")
-        ctx.exit(2)
-    try:
-        exclude_regex = black.re_compile_maybe_verbose(exclude)
-    except re.error:
-        black.err(f"Invalid regular expression for exclude given: {exclude!r}")
-        ctx.exit(2)
-
     report = black.Report(check=check, quiet=quiet, verbose=verbose)
-    root = black.find_project_root(src)
-    sources: Set[Path] = set()
-    for s in src:
-        p = Path(s)
-        if p.is_dir():
-            sources.update(
-                black.gen_python_files_in_dir(
-                    p,
-                    root,
-                    include_regex,
-                    exclude_regex,
-                    report,
-                    black.get_gitignore(root),
-                )
-            )
-        elif p.is_file() or s == "-":
-            # if a file was explicitly given, we don't care about its extension
-            sources.add(p)
-        else:
-            black.err(f"invalid path: {s}")
-    if len(sources) == 0:
-        if verbose or not quiet:
-            black.out("No paths given. Nothing to do.")
-        ctx.exit(0)
+
+    sources = black.get_sources(
+        ctx=ctx,
+        src=src,
+        quiet=quiet,
+        verbose=verbose,
+        include=include,
+        exclude=exclude,
+        force_exclude=None,
+        report=report,
+    )
+
+    black.path_empty(
+        sources,
+        "No Jupyter notebooks are present to be formatted. Nothing to do 😴",
+        quiet,
+        verbose,
+        ctx,
+    )
 
     for source in sources:
         reformat_one(
@@ -198,7 +181,7 @@ def cli(
         )
 
     if verbose or not quiet:
-        black.out("All done!")
+        black.out("All done! ✨ 🍰 ✨")
         click.secho(str(report), err=True)
     ctx.exit(report.return_code)
 

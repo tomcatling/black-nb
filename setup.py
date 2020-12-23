@@ -34,7 +34,7 @@ setup(
     python_requires=">3.6",
     install_requires=[
         "attrs>=18.2.0",
-        "black>=19.10b0",
+        "black>=20.8b0",
         "click>=7.0",
         "nbformat>=4.4.0",
     ],
