@@ -131,7 +131,7 @@ def cli(
     quiet: bool,
     verbose: bool,
     clear_output: bool,
-    src: Tuple[str],
+    src: Tuple[str, ...],
     config: Optional[str],
 ) -> None:
     """
