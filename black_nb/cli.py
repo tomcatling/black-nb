@@ -352,7 +352,7 @@ def contains_magic(line: str) -> bool:
     if len(line) == 0:
         return False
     else:
-        return line[0] == "%" or line[0] == "!"
+        return line[0] == "%" or line[0] == "!" or line[-1] == "?"
 
 
 def hide_magic(source: str) -> str:
