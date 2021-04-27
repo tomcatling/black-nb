@@ -27,6 +27,11 @@ DEFAULT_INCLUDES = r"\.ipynb$"
 DEFAULT_EXCLUDES = (
     rf"{black.DEFAULT_EXCLUDES.rstrip(')/')}|\.ipynb_checkpoints)/"
 )
+TARGET_VERSIONS = {
+    black.TargetVersion.PY36,
+    black.TargetVersion.PY37,
+    black.TargetVersion.PY38,
+}
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -139,7 +144,7 @@ def cli(
     """
     write_back = black.WriteBack.from_configuration(check=check, diff=False)
     mode = black.Mode(
-        target_versions=black.PY36_VERSIONS,
+        target_versions=TARGET_VERSIONS,
         line_length=line_length,
         is_pyi=False,
         string_normalization=True,
