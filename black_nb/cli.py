@@ -15,7 +15,7 @@
 
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Pattern, Tuple
 
 import black
 import click
@@ -56,6 +56,7 @@ TARGET_VERSIONS = {
     "--include",
     type=str,
     default=DEFAULT_INCLUDES,
+    callback=black.validate_regex,
     help=(
         "A regular expression that matches files and directories that should "
         "be included on recursive searches.  An empty value means all files "
@@ -69,6 +70,7 @@ TARGET_VERSIONS = {
     "--exclude",
     type=str,
     default=DEFAULT_EXCLUDES,
+    callback=black.validate_regex,
     help=(
         "A regular expression that matches files and directories that should "
         "be excluded on recursive searches. An empty value means no paths are "
@@ -76,6 +78,33 @@ TARGET_VERSIONS = {
         "(Windows, too). Exclusions are calculated first, inclusions later."
     ),
     show_default=True,
+)
+@click.option(
+    "--extend-exclude",
+    type=str,
+    callback=black.validate_regex,
+    help=(
+        "Like --exclude, but adds additional files and directories on top of the"
+        " excluded ones. (Useful if you simply want to add to the default)"
+    ),
+)
+@click.option(
+    "--force-exclude",
+    type=str,
+    callback=black.validate_regex,
+    help=(
+        "Like --exclude, but files and directories matching this regex will be "
+        "excluded even when they are passed explicitly as arguments."
+    ),
+)
+@click.option(
+    "--stdin-filename",
+    type=str,
+    help=(
+        "The name of the file when passing it through stdin. Useful to make "
+        "sure Black will respect --force-exclude option on some "
+        "editors that rely on using stdin."
+    ),
 )
 @click.option(
     "-q",
@@ -131,8 +160,11 @@ def cli(
     ctx: click.Context,
     line_length: int,
     check: bool,
-    include: str,
-    exclude: str,
+    include: Pattern[str],
+    exclude: Pattern[str],
+    extend_exclude: Optional[Pattern[str]],
+    force_exclude: Optional[Pattern[str]],
+    stdin_filename: Optional[str],
     quiet: bool,
     verbose: bool,
     clear_output: bool,
@@ -162,8 +194,10 @@ def cli(
         verbose=verbose,
         include=include,
         exclude=exclude,
-        force_exclude=None,
+        force_exclude=force_exclude,
         report=report,
+        extend_exclude=extend_exclude,
+        stdin_filename=stdin_filename,
     )
 
     black.path_empty(

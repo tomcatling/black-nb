@@ -71,6 +71,15 @@ Options:
                              calculated first, inclusions later.  [default: /(
                              \.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build
                              |buck-out|build|dist|\.ipynb_checkpoints)/]
+  --extend-exclude  TEXT     Like --exclude, but adds additional files and
+                             directories on top of the excluded ones.
+                             (Useful if you simply want to add to the default)
+  --force-exclude   TEXT     Like --exclude, but files and directories matching
+                             this regex will be excluded even when they are
+                             passed explicitly as arguments.
+  --stdin-filename  TEXT     The name of the file when passing it through stdin.
+                             Useful to make sure Black will respect --force-exclude
+                             option on some editors that rely on using stdin.
   -q, --quiet                Don't emit non-error messages to stderr. Errors
                              are still emitted, silence those with
                              2>/dev/null.
