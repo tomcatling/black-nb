@@ -84,8 +84,8 @@ TARGET_VERSIONS = {
     type=str,
     callback=black.validate_regex,
     help=(
-        "Like --exclude, but adds additional files and directories on top of the"
-        " excluded ones. (Useful if you simply want to add to the default)"
+        "Like --exclude, but adds additional files and directories on top of "
+        "the excluded ones. (Useful if you simply want to add to the default)"
     ),
 )
 @click.option(
@@ -93,8 +93,8 @@ TARGET_VERSIONS = {
     type=str,
     callback=black.validate_regex,
     help=(
-        "Like --exclude, but files and directories matching this regex will be "
-        "excluded even when they are passed explicitly as arguments."
+        "Like --exclude, but files and directories matching this regex will "
+        "be excluded even when they are passed explicitly as arguments."
     ),
 )
 @click.option(
