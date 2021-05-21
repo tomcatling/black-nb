@@ -284,7 +284,10 @@ def format_file_in_place(
     If `write_back` is YES, write reformatted code to the file.
     """
     try:
-        src_contents = nbformat.read(str(src), as_version=nbformat.NO_CONVERT,)
+        src_contents = nbformat.read(
+            str(src),
+            as_version=nbformat.NO_CONVERT,
+        )
     except nbformat.reader.NotJSONError:
         raise black.InvalidInput("Not JSON")
     except AttributeError:
@@ -352,7 +355,9 @@ def format_cell_source(
 
 
 def format_str(
-    src_contents: str, *, mode: black.FileMode = black.FileMode(),
+    src_contents: str,
+    *,
+    mode: black.FileMode = black.FileMode(),
 ) -> black.FileContent:
 
     # Strip trailing semicolon because Black removes it, but it is an
@@ -378,7 +383,10 @@ def assert_equivalent(src: str, dst: str) -> None:
     black.assert_equivalent(hide_magic(src), hide_magic(dst))
 
 
-def assert_stable(dst: str, mode: black.FileMode = black.FileMode(),) -> None:
+def assert_stable(
+    dst: str,
+    mode: black.FileMode = black.FileMode(),
+) -> None:
     new_dst = format_str(dst, mode=mode)
     if dst != new_dst:
         raise AssertionError(
@@ -391,7 +399,11 @@ def contains_magic(line: str) -> bool:
     if len(line) == 0:
         return False
     else:
-        return line[0] == "%" or line[0] == "!" or line[-1] == "?"
+        return (
+            line[0] == "%"
+            or line[0] == "!"
+            or (line[-1] == "?" and line.lstrip()[0] != "#")
+        )
 
 
 def hide_magic(source: str) -> str:
