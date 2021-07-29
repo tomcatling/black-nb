@@ -9,7 +9,14 @@ SOURCES = ["noxfile.py", "black_nb", "tests"]
 def mypy(session):
     """Type check code with mypy."""
     session.install("mypy")
-    session.run("mypy", "--strict", "black_nb")
+    session.run(
+        "mypy",
+        "--strict",
+        "--allow-untyped-decorators",
+        "--install-types",
+        "--non-interactive",
+        "black_nb",
+    )
 
 
 @nox.session()
