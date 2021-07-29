@@ -22,7 +22,7 @@ def flake8(session):
 @nox.session()
 def black(session):
     """Check code formatting with black."""
-    session.install("black==19.10b0")
+    session.install("black==21.4b0")
     if session.posargs:
         session.run("black", *session.posargs)
     else:
