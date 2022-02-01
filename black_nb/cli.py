@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Pattern, Tuple
 
 import black
+from black.files import find_project_root
 import click
 import nbformat
 from attr import dataclass
@@ -186,6 +187,10 @@ def cli(
         black.out(f"Using configuration from {config}.", bold=False, fg="blue")
 
     report = black.Report(check=check, quiet=quiet, verbose=verbose)
+
+    ctx.ensure_object(dict)
+    root, method = find_project_root(src)
+    ctx.obj["root"] = root
 
     sources = black.get_sources(
         ctx=ctx,
